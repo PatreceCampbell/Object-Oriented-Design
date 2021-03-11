@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="ResultComplaint" id="ResultComplaint">
+    <h2>Successful Form Submission</h2>
+    <h3> Thank you for submitting a complaint </h3>
+    <h4>Name: {{fname + " " + lname}} </h4> 
+    <h4>Subject: {{subject}} </h4> 
+    <h4>Compaint: {{message}} </h4> 
+    <h4>Email: {{email}} </h4> 
+</div>
+    
+{% endblock %}

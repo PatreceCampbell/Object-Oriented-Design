@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{%block main%}
+<main class="MainBody" id="MainBody">
+    <div class="LeftSide" id="LeftSide">
+        <!-- <h1>MAMA B'S WHOLESALE</h1> -->
+        <!-- <h3>GROCERIES ONLINE STORE</h3> -->
+        <h3>Hello, Valued Customer!</h3>
+        <!-- <h3>SUBSCRIBE TO OUR MAILING LIST</h3> -->
+        <p>Subscriber to our mailing list to get information about upcoming sales, promotions, new stocks and more!</p>
+        <img src="../static/Images/emoji.gif">
+    </div>
+    <div class="RightSide" id="RightSide">
+        <form method="post" action="{{url_for('Mailing')}}">
+            {{form.csrf_token}}
+            <div class="FormClass" id="FormClass">
+                <label>{{form.firstname.label}}</label> <span>(Required)</span>
+                <p>Please enter your first name.</p>
+                {{ form.firstname(class="Field") }}
+            </div>
+            <div class="FormClass" id="FormClass">
+                <label>{{form.lastname.label}}</label> <span>(Required)</span>
+                <p>Please enter your last name.</p>
+                {{ form.lastname(class="Field") }}
+            </div>
+            <div class="FormClass" id="FormClass">
+                <label>{{form.email.label}}</label> <span>(Required)</span>
+                <p>Please enter your e-mail address.</p>
+                {{ form.email(class="Field") }}
+            </div>
+            <div class="Button" id="Button">
+                <button>SUBSCRIBE</button>
+            </div>
+        </form>
+    </div>
+    
+</main>
+
+{% endblock %}

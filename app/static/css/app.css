@@ -1,0 +1,221 @@
+body {
+    padding-top: 5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.Intro{
+    padding-bottom: 10px;
+    font-weight: bolder;
+}
+
+Form{
+    padding-bottom: 20px;
+}
+
+.FormClass{
+    padding-bottom: 30px;
+}
+
+.Field{
+    padding-right: 100px;
+    padding-bottom: 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: rgb(206, 203, 203);
+    
+}
+
+.Field:hover{
+    background-color:  rgb(129, 205, 255);
+}
+
+.Area{
+    padding-right: 200px;
+    padding-bottom: 80px;
+    border-radius: 6px;
+    resize: none;
+}
+
+.Area:hover{
+    background-color:  rgb(85, 198, 233);
+}
+
+label{
+    font-weight: bolder;
+}
+
+span{
+    color: rgb(255, 61, 61);
+    font-weight: bolder;
+}
+
+.success{
+    background-color: rgb(119, 255, 119);
+    padding: 20px;
+    font-weight: bolder;
+    font-size: 18px;
+    color: rgb(0, 63, 0);
+}
+
+.danger{
+    background-color: rgb(247, 122, 122);
+    padding: 20px;
+    font-weight: bolder;
+    font-size: 18px;
+    color: rgb(128, 0, 0);
+}
+
+.MainBody{
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding: 50px;
+    margin: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px; 
+    border-radius: 5%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    
+}
+
+.RightSide{
+    background-color: white;
+    padding: 10px;
+    border-radius: 0px 20% 2% 0px;
+    box-shadow: 0 10px 25px rgb(9, 73, 110);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.LeftSide{
+    background-color: rgb(0, 153, 255);
+    padding: 10px;
+    padding-top: 100px;
+    text-align: center;
+    border-radius: 2% 0px 0px 20%;
+    color: white;
+    box-shadow: 0 10px 25px rgb(9, 73, 110);   
+}
+
+.LeftSide img{
+    height: 300px;
+    width: 300px;
+}
+
+.LeftSide h3{
+    font-weight: bolder;
+}
+
+.Button{
+    text-align: center;
+}
+
+button{
+    border-radius: 20px;
+    border: 3px solid rgb(0, 153, 255);
+    color:  rgb(0, 153, 255);
+    background-color: white;
+    font-weight: bold;
+    padding: 10px 50px;
+}
+
+button:hover{
+    background-color: rgb(0, 153, 255);
+    border: white;
+    color: white;
+}
+
+.ComplaintArea{
+    display: flex;
+    flex-direction: row;  
+}
+
+.First{
+    background-color: rgb(0, 153, 255);
+    border-radius: 2% 0px 0px 20%;
+    padding: 20px;
+    padding-left: 50px;
+    text-align: center;
+    background-image: linear-gradient(to right, rgb(123, 198, 248), rgb(0, 153, 255));
+    padding-top: 200px;
+    color: white;
+}
+
+.First h1{
+    animation-name: cool;
+    animation-duration: 8s;
+    animation-iteration-count: 10;
+    font-size: 60px;
+}
+
+@keyframes cool{
+    from {color:rgb(3, 61, 95);}
+    to {color: white;}
+}
+
+.Middle{
+    background-image: linear-gradient(to right, rgb(0, 153, 255), rgb(0, 82, 129));
+    padding: 40px;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+}
+
+.Last{
+    background-image: linear-gradient(to right, rgb(0, 82, 129), rgb(3, 61, 95));
+    border-radius: 0px 20% 2% 0px;
+    padding: 20px;
+    text-align: center; 
+    padding-right: 100px;
+    padding-top: 150px;
+    color: white;
+}
+
+.Last h4{
+    /* font-size: 12px;
+    font-weight: 5; */
+}
+
+.Last img, .First img{
+    height: 300px;
+    width: 300px;
+}
+
+.form-data{
+    padding-right: 100px;
+    padding-bottom: 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 20px;
+}
+
+.form-data:hover{
+    background-color:  rgb(129, 205, 255);
+}
+
+.form-data2{
+    padding-right: 100px;
+    padding-bottom: 50px;
+    border: none;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.form-data2:hover{
+    background-color:  rgb(129, 205, 255);
+}
+
+.required{
+    color: rgb(247, 82, 82);
+}
+
+.btn{
+    border-radius: 20px;
+    border: 3px solid rgb(0, 153, 255);
+    color:  rgb(0, 153, 255);
+    background-color: white;
+    font-weight: bold;
+    padding: 10px 50px;
+}
+

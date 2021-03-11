@@ -1,0 +1,16 @@
+click
+Flask
+itsdangerous
+Jinja2
+MarkupSafe
+Werkzeug
+email_validator
+flask_mail 
+flask_wtf
+Flask-Login
+Flask-Migrate
+Flask-Script
+Flask-Login
+psycopg2
+Flask-SQLAlchemy
+gunicorn

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block main %}
+
+<div class="ComplaintArea" id="ComplaintArea">
+    <div class="First" id="First">
+        <h1>MAMA B'S WHOLESALE</h1>
+        <h3>Hello, Valued Customer!</h3>
+        <h5>Fill in this form in the middle to log a complaint.</h5>
+        <img src="../static/Images/logo2.png">
+    </div>
+    <div class="Middle" id="formdiv">
+        <form method='POST' action="{{url_for('complaint')}}">
+            {{form.csrf_token}}
+            <div>
+                {{form.fname.label}} <span class='required'>(Required)</span> <br>{{form.fname.description}} <br>{{form.fname (class="form-data")}}
+            </div>
+            <div>
+                {{form.lname.label}} <span class='required'>(Required)</span> <br>{{form.lname.description}} <br>{{form.lname (class="form-data")}}
+            </div>
+            <br>
+            <div>
+                {{form.email.label}} <span class='required'>(Required)</span> <br>{{form.email.description}} <br>{{form.email (class="form-data")}}
+            </div>
+            <br>
+            <div>
+                {{form.subject.label}} <span class='required'>(Required)</span><br> {{form.subject.description}} <br>
+                {{form.subject  (class="form-data")}}
+            </div>
+            <br>
+            <div>
+                {{form.message.label}} <span class='required'>(Required)</span><br>{{form.message.description}} <br>
+                {{form.message (class="form-data2")}}
+            </div>
+            <br>
+            <button class="btn" type="submit">Send</button>
+        </form>
+    </div>
+    <div class="Last" id="Last">
+        <h4>Thank you for stopping by! Come again soon!</h4>
+        <p> Contact us @ 876-547-3663</p>
+        <p>Our email address is MamaBWholesale@gmail.com</p>
+        <img src="../static/Images/thankyou.gif">
+    </div>    
+</div>
+
+
+{% endblock %}
