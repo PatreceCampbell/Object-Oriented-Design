@@ -113,17 +113,17 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     if request.method == "POST" and form.validate_on_submit():
-        form.set_username(form.username.data) 
-        form.set_password(form.password.data) 
+        username = form.username.data
+        password = form.password.data
 
-        user = UserProfile.query.filter_by(username=form.get_username()).first()
-        if user is not None and check_password_hash(user.password,form.get_password()):
+        user = UserProfile.query.filter_by(username=username).first()
+        if user is not None and check_password_hash(user.password,password):
             remember_me = False
             if 'remember_me' in request.form:
                 remember_me = True
             login_user(user, remember=remember_me)
             flash('Login successful!', 'success')
-            return redirect(url_for("about"))
+            return redirect(url_for("home"))
         else:
             flash('Username or password is incorrect.', 'danger')   
     flash_errors(form)

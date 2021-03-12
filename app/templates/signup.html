@@ -5,8 +5,8 @@
   <div class="LoginTop" id="LoginTop">
     <img src="../static/Images/logo2.png" alt="Logo">
   </div>
-  <div class="Signup-form center-block">
-    <h2>Signup</h2>
+  <div class="Signup-form center-block" id="Signup-form">
+    <h2>Sign Up</h2>
     {% include 'flash_messages.html' %}
     <form action="{{ url_for('Signup') }}" method="post">
       {{ form.csrf_token }}
@@ -20,11 +20,11 @@
       </div>
       <div class="form-group">
         {{ form.username.label }}
-        {{ form.username(class='form-control', placeholder="Enter your lastname") }}
+        {{ form.username(class='form-control', placeholder="Enter your username") }}
       </div>
       <div class="form-group">
         {{ form.email.label }}
-        {{ form.email(class='form-control') }}
+        {{ form.email(class='form-control', placeholder="Enter your email address") }}
       </div>
       <div class="form-group">
         {{ form.password.label }}
