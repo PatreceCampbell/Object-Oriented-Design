@@ -2,6 +2,8 @@ from . import db
 from werkzeug.security import generate_password_hash
 
 class UserProfile(db.Model):
+    __tablename__ = 'user_profile'
+
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))

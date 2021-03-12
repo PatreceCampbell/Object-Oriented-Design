@@ -4,14 +4,15 @@ Jinja2 Documentation:    http://jinja.pocoo.org/2/documentation/
 Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
-
+import psycopg2
+from wtforms.fields.simple import PasswordField
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
-from .forms import SubscriberForm, ContactForm
+from .forms import SubscriberForm, ComplaintForm,SignupForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
-from app.models import UserProfile,Subscriber,Complaint
-from werkzeug.security import check_password_hash
+from app.models import UserProfile, Subscriber, Complaint
+from werkzeug.security import check_password_hash,generate_password_hash
 
 ###
 # Routing for your application.
@@ -35,7 +36,7 @@ def about():
 @app.route('/complaint', methods=["GET", "POST"])
 @login_required
 def complaint():
-    form=ContactForm()
+    form=ComplaintForm()
     if request.method=='POST':
         if form.validate_on_submit():
             form.set_fname(form.fname.data)
@@ -43,9 +44,44 @@ def complaint():
             form.set_email(form.email.data)
             form.set_subject(form.subject.data)
             form.set_message(form.message.data)
+
+            db=connect_db()
+            cur=db.cursor()
+            sql="INSERT INTO complaint (first_name,last_name,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
+            cur.execute(sql,(form.get_fname(),form.get_lname(),form.get_email(),form.get_subject(),form.get_message()))
+            db.commit()
+    
             return render_template('result.html',fname=form.get_fname(),lname=form.get_lname(),email=form.get_email(),subject=form.get_subject(),message=form.get_message())
     return render_template('complaint.html',form=form)
 
+def connect_db():
+     return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="ood")
+
+@app.route('/signup', methods=['GET', 'POST'])
+def Signup():
+    form=SignupForm()
+    if request.method=='POST':
+        if form.validate_on_submit():
+            form.set_first(form.firstname.data)
+            form.set_last(form.lastname.data)
+            form.set_username(form.username.data)
+            form.set_email(form.email.data)
+            form.set_password(form.password.data)
+            password=form.get_password()
+            fname=form.get_first()
+            lname=form.get_last()
+            username=form.get_username()
+            email=form.get_email()
+
+            db=connect_db()
+            cur=db.cursor()
+            sql="INSERT INTO user_profile (first_name,last_name,username,password,email) VALUES (%s,%s,%s,%s,%s)"
+            cur.execute(sql,(fname,lname,username,generate_password_hash(password,method='pbkdf2:sha256'),email))
+            db.commit()
+
+            flash("Signup Successful!", 'success')
+            return redirect(url_for('login'))
+    return render_template('signup.html',form=form)
 
 @app.route('/Mailing List', methods=['GET', 'POST'])
 @login_required
@@ -59,7 +95,12 @@ def Mailing():
             subscriberform.set_first(subscriberform.firstname.data)
             subscriberform.set_last(subscriberform.lastname.data)
             subscriberform.set_email(subscriberform.email.data) 
-
+            
+            db=connect_db()
+            cur=db.cursor()
+            sql="INSERT INTO subscriber (first_name,last_name,email) VALUES (%s,%s,%s)"
+            cur.execute(sql,(subscriberform.get_first(),subscriberform.get_last(),subscriberform.get_email()))
+            db.commit()
             flash("Message successfully sent!", 'success')
             return redirect(url_for('home'))
         else:
@@ -70,13 +111,13 @@ def Mailing():
 def login():
     form = LoginForm()
     if current_user.is_authenticated:
-        return redirect(url_for('secure_page'))
+        return redirect(url_for('home'))
     if request.method == "POST" and form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
+        form.set_username(form.username.data) 
+        form.set_password(form.password.data) 
 
-        user = UserProfile.query.filter_by(username=username).first()
-        if user is not None and check_password_hash(user.password,password):
+        user = UserProfile.query.filter_by(username=form.get_username()).first()
+        if user is not None and check_password_hash(user.password,form.get_password()):
             remember_me = False
             if 'remember_me' in request.form:
                 remember_me = True

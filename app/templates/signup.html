@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="SignupBody" id="SignBody">
+  <div class="LoginTop" id="LoginTop">
+    <img src="../static/Images/logo2.png" alt="Logo">
+  </div>
+  <div class="Signup-form center-block">
+    <h2>Signup</h2>
+    {% include 'flash_messages.html' %}
+    <form action="{{ url_for('Signup') }}" method="post">
+      {{ form.csrf_token }}
+      <div class="form-group">
+        {{ form.firstname.label }}
+        {{ form.firstname(class='form-control', placeholder="Enter your firstname") }}
+      </div>
+      <div class="form-group">
+        {{ form.lastname.label }}
+        {{ form.lastname(class='form-control', placeholder="Enter your lastname") }}
+      </div>
+      <div class="form-group">
+        {{ form.username.label }}
+        {{ form.username(class='form-control', placeholder="Enter your lastname") }}
+      </div>
+      <div class="form-group">
+        {{ form.email.label }}
+        {{ form.email(class='form-control') }}
+      </div>
+      <div class="form-group">
+        {{ form.password.label }}
+        {{ form.password(class='form-control') }}
+      </div>
+      <button type="submit" name="submit" class="btn2 btn-primary btn-block">Signup</button>
+    </form>
+    <h5>Do you already have an account? <a class="LoginLink" href="{{ url_for('login') }}">Login</a></h5>
+  </div>
+</div>  
+
+{% endblock %}

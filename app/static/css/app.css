@@ -171,11 +171,6 @@ button:hover{
     color: white;
 }
 
-.Last h4{
-    /* font-size: 12px;
-    font-weight: 5; */
-}
-
 .Last img, .First img{
     height: 300px;
     width: 300px;
@@ -219,3 +214,84 @@ button:hover{
     padding: 10px 50px;
 }
 
+.LoginBody{
+    background-color: rgb(3, 61, 95);
+    width: 450px;
+    height: 600px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    box-shadow: 0 10px 25px rgb(9, 73, 110);  
+}
+
+.LoginBody a{
+    color: rgb(3, 61, 95);
+}
+
+.LoginTop{
+    background-color: rgb(3, 61, 95);
+    padding: 20px;
+}
+
+
+.LoginTop img{
+    width: 150px;
+    height: 150px;
+}
+
+.login-form{
+    background-color: white;
+    padding: 20px;
+    height: 420px;
+    text-align: center;
+    border-radius: 20% 0% 0% 2%;
+}
+
+.login-form h2{
+    padding-bottom: 10px;
+}
+
+.login-form h5{
+    padding-top: 10px;
+}
+
+.form-control{
+    width: 400px;
+    background-color: rgb(236, 233, 233);
+}
+
+.form-control:hover{
+    background-color: rgb(129, 205, 255);
+}
+
+.form-group{
+    padding: 10px;
+    text-align: left;
+}
+
+.btn2{
+    width: 400px;
+    background-color: rgb(3, 61, 95);
+    border: none;
+}
+
+.label{
+    text-align: left;
+}
+
+.SignupBody{
+    background-color: rgb(3, 61, 95);
+    width: 450px;
+    height: 900px;
+    padding: 10px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    box-shadow: 0 10px 25px rgb(9, 73, 110);  
+}
+
+.Signup-form{
+    background-color: white;
+    padding: 20px;
+    height: 420px;
+    text-align: center;
+    border-radius: 20% 0% 0% 2%;
+}

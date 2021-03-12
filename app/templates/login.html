@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block main %}
+<div class="LoginBody" id="LoginBody">
+  <div class="LoginTop" id="LoginTop">
+    <img src="../static/Images/logo2.png" alt="Logo">
+  </div>
   <div class="login-form center-block">
-    <h2>Please Log in</h2>
+    <h2>Login</h2>
     {% include 'flash_messages.html' %}
     <form action="{{ url_for('login') }}" method="post">
       {{ form.csrf_token }}
@@ -14,7 +18,10 @@
         {{ form.password.label }}
         {{ form.password(class='form-control') }}
       </div>
-      <button type="submit" name="submit" class="btn btn-primary btn-block">Log in</button>
+      <button type="submit" name="submit" class="btn2 btn-primary btn-block">Log in</button>
     </form>
+    <h5>Don't have an account? <a class="SignupLink" href="{{ url_for('Signup') }}">Sign Up</a></h5>
   </div>
+</div>  
+
 {% endblock %}

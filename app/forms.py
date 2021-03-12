@@ -2,9 +2,60 @@ from flask_wtf import FlaskForm
 from wtforms import StringField,PasswordField,TextAreaField
 from wtforms.validators import DataRequired, Email,InputRequired
 
+
+class SignupForm(FlaskForm):
+    firstname = StringField('First Name', validators=[DataRequired()])
+    lastname = StringField('Last Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    username = StringField('Username', validators=[InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired()])
+
+    def set_first(self,firstname):
+        self.firstname=firstname
+
+    def get_first(self):
+        return self.firstname
+
+    def set_last(self,lastname):
+        self.lastname=lastname
+        
+    def get_last(self):
+        return self.lastname
+
+    def set_email(self,email):
+        self.email=email
+
+    def get_email(self):
+        return self.email
+
+    def set_password(self,password):
+        self.password=password
+        
+    def get_password(self):
+        return self.password
+
+    def set_username(self,username):
+        self.username=username
+
+    def get_username(self):
+        return self.username
+
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
+
+    def set_username(self,username):
+        self.username=username
+
+    def get_username(self):
+        return self.username
+
+    def set_password(self,password):
+        self.password=password
+        
+    def get_password(self):
+        return self.password
 
 class SubscriberForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
@@ -30,7 +81,7 @@ class SubscriberForm(FlaskForm):
         return self.email
 
     
-class ContactForm(FlaskForm):
+class ComplaintForm(FlaskForm):
     fname=StringField('First Name', validators=[DataRequired()], description='Please enter your first name.')
     lname=StringField('Last Name', validators=[DataRequired()], description='Please enter your last name.')
     email=StringField('E-mail', validators=[DataRequired(), Email()], description='Please enter your email address.')
