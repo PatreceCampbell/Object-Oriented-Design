@@ -2,5 +2,5 @@
 
 {% block main %}
 {% include 'flash_messages.html' %}
-<h1>Welcome to Mama B's Wholesale!</h1>
+<h1>Hi {{current_user.first_name}} {{current_user.last_name}}! Welcome to Mama B's Wholesale!</h1>
 {% endblock %}

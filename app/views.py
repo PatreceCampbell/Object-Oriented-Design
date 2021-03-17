@@ -25,14 +25,6 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
-
-@app.route('/about/')
-@login_required
-def about():
-    """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
-
-
 @app.route('/complaint', methods=["GET", "POST"])
 @login_required
 def complaint():
