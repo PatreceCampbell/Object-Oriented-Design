@@ -6,7 +6,7 @@ This file creates your application.
 """
 import psycopg2
 from wtforms.fields.simple import PasswordField
-from app import app, db, login_manager
+from app import app, db, login_manager, models
 from flask import render_template, request, redirect, url_for, flash
 from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm
 from flask_login import login_user, logout_user, current_user, login_required
@@ -38,6 +38,11 @@ def additem():
             form.set_quantity_sold(form.quantity_sold.data)
             form.set_supplier(form.supplier.data)
             form.set_perishables(form.perishables.data)
+            form.set_photo(form.photo.data)
+
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
 
             # db=connect_db()
             # cur=db.cursor()
@@ -45,7 +50,8 @@ def additem():
             # cur.execute(sql,(form.get_fname(),form.get_lname(),form.get_email(),form.get_subject(),form.get_message()))
             # db.commit()
     
-            return render_template('result.html',item=itemform.get_item(),cost_price=itemform.get_cost_price(),selling_price=itemform.get_selling_price(),quantity_instock=itemform.get_quantity_instock(),quantity_sold=itemform.get_quantity_sold(),supplier=itemform.get_supplier(),perishables=itemform.get_perishables())
+            flash('File Saved', 'success')
+            return render_template('result.html',item=itemform.get_item(),cost_price=itemform.get_cost_price(),selling_price=itemform.get_selling_price(),quantity_instock=itemform.get_quantity_instock(),quantity_sold=itemform.get_quantity_sold(),supplier=itemform.get_supplier(),perishables=itemform.get_perishables(), photo=itemform.get_photo())
     return render_template('addItem.html',form=itemform)
 
 @app.route('/updateitem')
@@ -61,6 +67,10 @@ def updateitem():
             form.setquantitysold(form.quantitysold.data)
             form.setsupplier(form.supplier.data)
             form.setperishables(form.perishables.data)
+            form.setphoto(form.photo.data)
+
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             # db=connectdb()
             # cur=db.cursor()
@@ -68,8 +78,28 @@ def updateitem():
             # cur.execute(sql,(form.getfname(),form.getlname(),form.getemail(),form.getsubject(),form.getmessage()))
             # db.commit()
     
-            return render_template('result.html',item=updateform.getitem(),costprice=updateform.getcostprice(),sellingprice=updateform.getsellingprice(),quantityinstock=updateform.getquantityinstock(),quantitysold=updateform.getquantitysold(),supplier=updateform.getsupplier(),perishables=updateform.getperishables())
+            flash('File Saved', 'success')
+            return render_template('result.html',item=updateform.getitem(),costprice=updateform.getcostprice(),sellingprice=updateform.getsellingprice(),quantityinstock=updateform.getquantityinstock(),quantitysold=updateform.getquantitysold(),supplier=updateform.getsupplier(),perishables=updateform.getperishables(),photo=itemform.getphoto()) 
     return render_template('updateItem.html',form=updateform)
+
+def connect_db():
+    return psycopg2.connect(host="localhost",database="project1", user="project1", password="project1")
+
+def get_uploaded_images():
+    rootdir = os.getcwd()
+    photolist = []
+
+    for subdir, dirs, files in os.walk(rootdir + '/uploads'):
+        for file in files:
+            photolist += [file]
+    photolist.pop(0)
+    return photolist
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    rootdir2 = os.getcwd()
+
+    return send_from_directory(os.path.join(rootdir2, app.config['UPLOAD_FOLDER']), filename)
 
 @app.route('/complaint', methods=["GET", "POST"])
 @login_required

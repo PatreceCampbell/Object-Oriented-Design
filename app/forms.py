@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, DecimalField, IntegerField
-from wtforms.validators import DataRequired, Email, InputRequired
+from wtforms import StringField, PasswordField, TextAreaField, DecimalField, IntegerField, FileField
+from wtforms.validators import DataRequired, Email, InputRequired, Regexp
 
 
 class SignupForm(FlaskForm):
@@ -135,13 +135,14 @@ class ComplaintForm(FlaskForm):
         return self.message
 
 class AddItemForm(FlaskForm):
-    item_name = StringField('Item Name', validators=[DataRequired()])
+    item_name = StringField('Item Name', validators=[DataRequired(), Regexp("/^[A-Za-z]+$/", flags=0, message="String Required")])
     cost_price = DecimalField('Cost Price', validators=[DataRequired()])
     selling_price = DecimalField('Selling Price', validators=[DataRequired()])
     quantity_instock = IntegerField('Quantity Instock', validators=[DataRequired()])
     quantity_sold = IntegerField('Quantity Sold', validators=[DataRequired()])
-    supplier = StringField('Username', validators=[DataRequired()])
+    supplier = StringField('Supplier', validators=[DataRequired()])
     perishables = IntegerField('Perishables', validators=[DataRequired()])
+    photo = FileField('Item Image', validators=[DataRequired()])
 
     def set_item(self,item_name):
         self.item_name = item_name
@@ -184,15 +185,22 @@ class AddItemForm(FlaskForm):
         
     def get_perishables(self):
         return self.perishables 
+    
+    def set_photo(self,photo):
+        self.photo = photo 
+        
+    def get_photo(self):
+        return self.photo 
 
 class UpdateItemForm(FlaskForm):
-    itemname = StringField('Item Name', validators=[DataRequired()])
+    itemname = StringField('Item Name', validators=[DataRequired(), Regexp("/^[A-Za-z]+$/", flags=0, message="String Required")])
     costprice = DecimalField('Cost Price', validators=[DataRequired()])
     sellingprice = DecimalField('Selling Price', validators=[DataRequired()])
     quantityinstock = IntegerField('Quantity Instock', validators=[DataRequired()])
     quantitysold = IntegerField('Quantity Sold', validators=[DataRequired()])
-    supplier = StringField('Username', validators=[DataRequired()])
+    supplier = StringField('Supplier', validators=[DataRequired()])
     perishables = IntegerField('Perishables', validators=[DataRequired()])
+    photo = FileField('Item Image', validators=[DataRequired()])
 
     def setitem(self,itemname):
         self.itemname = itemname
@@ -235,4 +243,11 @@ class UpdateItemForm(FlaskForm):
         
     def getperishables(self):
         return self.perishables 
+
+    
+    def setphoto(self,photo):
+        self.photo = photo 
+        
+    def getphoto(self):
+        return self.photo 
 
