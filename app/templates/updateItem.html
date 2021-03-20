@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="UpdateItemBody" id="UpdateItemBody">
+  <!-- <div class="UpdateItemTop" id="UpdateItemTop">
+    <img src="../static/Images/logo2.png" alt="Logo">
+    ****************** IMPLEMENT CODE THAT LIST ITEMS IN INVENTORY WITH AN UPDATE BUTTON. ****************
+    *************** WE COULD USE THE ITEM ID TO HELP WITH THIS. **********************************
+    ************** WHENEVER THE UPDATE BUTTON IS PRESSED WE GET THE ID # FROM THE DATABSE *******************
+    ************ ALSO REMOVE THE SAME VALUES ENTERED WITH THE ACTUAL VALUES RETRIEVED FROM THE DATABASE *******************
+  </div> -->
+  <div class="UpdateItemBottom" id="UpdateItemBottom">
+    <div class="UpdateItemForm center-block">
+      <h2>UPDATE ITEMS IN INVENTORY</h2>
+      {% include 'flash_messages.html' %}
+      <form action="{{ url_for('updateitem') }}" method="post">
+        {{ form.csrf_token }}
+        <div class="form-group">
+          {{ form.itemname.label }}
+          {{ form.itemname(class='form-control', value="Cheese Cake") }} 
+        </div>
+        <div class="form-group">
+          {{ form.costprice.label }}
+          {{ form.costprice(class='form-control', value="1000") }}
+        </div>
+        <div class="form-group">
+            {{ form.sellingprice.label }}
+            {{ form.sellingprice(class='form-control', value="1500") }}
+        </div>
+        <div class="form-group">
+            {{ form.quantityinstock.label }}
+            {{ form.quantityinstock(class='form-control', value="10") }}
+        </div>
+        <div class="form-group">
+            {{ form.quantitysold.label }}
+            {{ form.quantitysold(class='form-control', value="14") }}
+        </div>
+        <div class="form-group">
+            {{ form.supplier.label }}
+            {{ form.supplier(class='form-control', value="Pastry Passion") }}
+        </div>
+        <div class="form-group">
+            {{ form.perishables.label }}
+            {{ form.perishables(class='form-control', value="10") }}
+        </div>
+        <button type="submit" name="submit" class="btn4 btn-primary">Update</button>
+      </form>
+    </div>
+{% endblock %}

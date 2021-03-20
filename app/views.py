@@ -8,7 +8,7 @@ import psycopg2
 from wtforms.fields.simple import PasswordField
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
-from .forms import SubscriberForm, ComplaintForm,SignupForm
+from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
 from app.models import UserProfile, Subscriber, Complaint
@@ -24,6 +24,52 @@ from werkzeug.security import check_password_hash,generate_password_hash
 def home():
     """Render website's home page."""
     return render_template('home.html')
+
+@app.route('/additem')
+def additem():
+    itemform = AddItemForm()
+
+    if request.method=='POST':
+        if form.validate_on_submit():
+            form.set_item(form.item_name.data)
+            form.set_cost_price(form.cost_price.data)
+            form.set_selling_price(form.selling_price.data)
+            form.set_quantity_instock(form.quantity_instock.data)
+            form.set_quantity_sold(form.quantity_sold.data)
+            form.set_supplier(form.supplier.data)
+            form.set_perishables(form.perishables.data)
+
+            # db=connect_db()
+            # cur=db.cursor()
+            # sql="INSERT INTO complaint (first_name,last_name,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
+            # cur.execute(sql,(form.get_fname(),form.get_lname(),form.get_email(),form.get_subject(),form.get_message()))
+            # db.commit()
+    
+            return render_template('result.html',item=itemform.get_item(),cost_price=itemform.get_cost_price(),selling_price=itemform.get_selling_price(),quantity_instock=itemform.get_quantity_instock(),quantity_sold=itemform.get_quantity_sold(),supplier=itemform.get_supplier(),perishables=itemform.get_perishables())
+    return render_template('addItem.html',form=itemform)
+
+@app.route('/updateitem')
+def updateitem():
+    updateform = UpdateItemForm()
+
+    if request.method=='POST':
+        if form.validate_on_submit():
+            form.setitem(form.itemname.data)
+            form.setcostprice(form.costprice.data)
+            form.setsellingprice(form.sellingprice.data)
+            form.setquantityinstock(form.quantityinstock.data)
+            form.setquantitysold(form.quantitysold.data)
+            form.setsupplier(form.supplier.data)
+            form.setperishables(form.perishables.data)
+
+            # db=connectdb()
+            # cur=db.cursor()
+            # sql="INSERT INTO complaint (firstname,lastname,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
+            # cur.execute(sql,(form.getfname(),form.getlname(),form.getemail(),form.getsubject(),form.getmessage()))
+            # db.commit()
+    
+            return render_template('result.html',item=updateform.getitem(),costprice=updateform.getcostprice(),sellingprice=updateform.getsellingprice(),quantityinstock=updateform.getquantityinstock(),quantitysold=updateform.getquantitysold(),supplier=updateform.getsupplier(),perishables=updateform.getperishables())
+    return render_template('updateItem.html',form=updateform)
 
 @app.route('/complaint', methods=["GET", "POST"])
 @login_required
@@ -120,6 +166,28 @@ def login():
             flash('Username or password is incorrect.', 'danger')   
     flash_errors(form)
     return render_template("login.html", form=form)
+
+@app.route("/adminlogin", methods=["GET", "POST"])
+def adminlogin():
+    form = AdminLoginForm()
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    if request.method == "POST" and form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        user = UserProfile.query.filter_by(username=username).first()
+        if user is not None and check_password_hash(user.password,password):
+            remember_me = False
+            if 'remember_me' in request.form:
+                remember_me = True
+            login_user(user, remember=remember_me)
+            flash('Login successful!', 'success')
+            return redirect(url_for("home"))
+        else:
+            flash('Username or password is incorrect.', 'danger')   
+    flash_errors(form)
+    return render_template("adminlogin.html", form=form)
 
 ###
 # The functions below should be applicable to all Flask apps.

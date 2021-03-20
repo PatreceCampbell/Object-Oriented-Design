@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="AddItemBody" id="AddItemBody">
+  <!-- <div class="AddItemTop" id="AddItemTop">
+    <img src="../static/Images/logo2.png" alt="Logo">
+  </div> -->
+  <div class="AddItemBottom" id="AddItemBottom">
+    <div class="AddItemForm center-block">
+      <h2>ADD ITEMS TO INVENTORY</h2>
+      {% include 'flash_messages.html' %}
+      <form action="{{ url_for('additem') }}" method="post">
+        {{ form.csrf_token }}
+        <div class="form-group">
+          {{ form.item_name.label }}
+          {{ form.item_name(class='form-control', placeholder="Enter item name") }}
+        </div>
+        <div class="form-group">
+          {{ form.cost_price.label }}
+          {{ form.cost_price(class='form-control', placeholder="Enter cost price") }}
+        </div>
+        <div class="form-group">
+            {{ form.selling_price.label }}
+            {{ form.selling_price(class='form-control', placeholder="Enter selling price") }}
+        </div>
+        <div class="form-group">
+            {{ form.quantity_instock.label }}
+            {{ form.quantity_instock(class='form-control', placeholder="Enter quantity instock") }}
+        </div>
+        <div class="form-group">
+            {{ form.quantity_sold.label }}
+            {{ form.quantity_sold(class='form-control', placeholder="Enter quantity sold") }}
+        </div>
+        <div class="form-group">
+            {{ form.supplier.label }}
+            {{ form.supplier(class='form-control', placeholder="Enter supplier name") }}
+        </div>
+        <div class="form-group">
+            {{ form.perishables.label }}
+            {{ form.perishables(class='form-control', placeholder="Enter amount of perishables") }}
+        </div>
+        <button type="submit" name="submit" class="btn3 btn-primary">Add Item</button>
+      </form>
+    </div>
+{% endblock %}
