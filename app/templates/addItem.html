@@ -9,7 +9,7 @@
     <div class="AddItemForm center-block">
       <h2>ADD ITEMS TO INVENTORY</h2>
       {% include 'flash_messages.html' %}
-      <form action="{{ url_for('additem') }}" method="post">
+      <form method="post" enctype="multipart/form-data" action="{{ url_for('additem') }}">
         {{ form.csrf_token }}
         <div class="form-group">
           {{ form.item_name.label }}
@@ -38,6 +38,10 @@
         <div class="form-group">
             {{ form.perishables.label }}
             {{ form.perishables(class='form-control', placeholder="Enter amount of perishables") }}
+        </div>
+        <div class="form-group">
+          {{ form.category.label }}
+          {{ form.category(class='form-control', placeholder="Enter item category") }}
         </div>
         <div class="form-group">
             {{form.photo.label}}

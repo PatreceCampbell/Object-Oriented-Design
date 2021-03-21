@@ -44,6 +44,10 @@
             {{ form.perishables(class='form-control', value="10") }}
         </div>
         <div class="form-group">
+          {{ form.category.label }}
+          {{ form.category(class='form-control', placeholder="Enter item category") }}
+        </div>
+        <div class="form-group">
             {{form.photo.label}}
             {{form.photo(class="form-control")}}
         </div>

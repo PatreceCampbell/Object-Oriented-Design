@@ -5,14 +5,16 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 import psycopg2
+import os
 from wtforms.fields.simple import PasswordField
 from app import app, db, login_manager, models
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
 from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
-from app.models import UserProfile, Subscriber, Complaint
+from app.models import UserProfile, Subscriber, Complaint, Inventory
 from werkzeug.security import check_password_hash,generate_password_hash
+from werkzeug.utils import secure_filename
 
 ###
 # Routing for your application.
@@ -25,9 +27,9 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
-@app.route('/additem')
+@app.route('/additem', methods=["GET", "POST"])
 def additem():
-    itemform = AddItemForm()
+    form = AddItemForm()
 
     if request.method=='POST':
         if form.validate_on_submit():
@@ -38,52 +40,96 @@ def additem():
             form.set_quantity_sold(form.quantity_sold.data)
             form.set_supplier(form.supplier.data)
             form.set_perishables(form.perishables.data)
-            form.set_photo(form.photo.data)
+            form.set_category(form.category.data)
+            photo = form.photo.data
+            form.set_photo(photo)
+            item_name = form.get_item
+            cost_price = form.get_cost_price
+            selling_price = form.get_selling_price
+            quantity_instock = form.get_quantity_instock
+            quantity_sold = form.get_quantity_sold
+            supplier = form.get_supplier
+            category = form.get_category
+            perishables = form.get_perishables
+
 
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
 
-            # db=connect_db()
-            # cur=db.cursor()
-            # sql="INSERT INTO complaint (first_name,last_name,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
-            # cur.execute(sql,(form.get_fname(),form.get_lname(),form.get_email(),form.get_subject(),form.get_message()))
-            # db.commit()
+            db=connect_db()
+            cur=db.cursor()
+            sql="INSERT INTO inventory (item_name,cost_price,selling_price,quantity_instock,quantity_sold,supplier,perishables,category,photo) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cur.execute(sql,(form.get_item(),form.get_cost_price(),form.get_selling_price(),form.get_quantity_instock(),form.get_quantity_sold(),form.get_supplier(),form.get_perishables(),form.get_category(),filename))
+            db.commit()
     
             flash('File Saved', 'success')
-            return render_template('result.html',item=itemform.get_item(),cost_price=itemform.get_cost_price(),selling_price=itemform.get_selling_price(),quantity_instock=itemform.get_quantity_instock(),quantity_sold=itemform.get_quantity_sold(),supplier=itemform.get_supplier(),perishables=itemform.get_perishables(), photo=itemform.get_photo())
-    return render_template('addItem.html',form=itemform)
+            return redirect(url_for('displayinventory'))
+            # return render_template('result.html',item=form.get_item(),cost_price=form.get_cost_price(),selling_price=form.get_selling_price(),quantity_instock=form.get_quantity_instock(),quantity_sold=form.get_quantity_sold(),supplier=form.get_supplier(),perishables=form.get_perishables(), photo=form.get_photo())
+        else:
+            flash_errors(form)    
+    return render_template('addItem.html',form=form)
 
-@app.route('/updateitem')
+@app.route('/updateitem', methods=["GET", "POST"])
 def updateitem():
     updateform = UpdateItemForm()
 
     if request.method=='POST':
         if form.validate_on_submit():
-            form.setitem(form.itemname.data)
-            form.setcostprice(form.costprice.data)
-            form.setsellingprice(form.sellingprice.data)
-            form.setquantityinstock(form.quantityinstock.data)
-            form.setquantitysold(form.quantitysold.data)
-            form.setsupplier(form.supplier.data)
-            form.setperishables(form.perishables.data)
-            form.setphoto(form.photo.data)
+            form.set_item(form.item_name.data)
+            form.set_cost_price(form.cost_price.data)
+            form.set_selling_price(form.selling_price.data)
+            form.set_quantity_instock(form.quantity_instock.data)
+            form.set_quantity_sold(form.quantity_sold.data)
+            form.set_supplier(form.supplier.data)
+            form.set_perishables(form.perishables.data)
+            form.set_category(form.category.data)
+            photo = form.photo.data
+            form.set_photo(photo)
+            item_name = form.get_item
+            cost_price = form.get_cost_price
+            selling_price = form.get_selling_price
+            quantity_instock = form.get_quantity_instock
+            quantity_sold = form.get_quantity_sold
+            supplier = form.get_supplier
+            category = form.get_category
+            perishables = form.get_perishables
+
 
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             # db=connectdb()
             # cur=db.cursor()
-            # sql="INSERT INTO complaint (firstname,lastname,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
+            # sql="INSERT INTO Inventory (firstname,lastname,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
             # cur.execute(sql,(form.getfname(),form.getlname(),form.getemail(),form.getsubject(),form.getmessage()))
             # db.commit()
     
             flash('File Saved', 'success')
-            return render_template('result.html',item=updateform.getitem(),costprice=updateform.getcostprice(),sellingprice=updateform.getsellingprice(),quantityinstock=updateform.getquantityinstock(),quantitysold=updateform.getquantitysold(),supplier=updateform.getsupplier(),perishables=updateform.getperishables(),photo=itemform.getphoto()) 
+            return render_template('result.html',item=updateform.getitem(),costprice=updateform.getcostprice(),sellingprice=updateform.getsellingprice(),quantityinstock=updateform.getquantityinstock(),quantitysold=updateform.getquantitysold(),supplier=updateform.getsupplier(),perishables=updateform.getperishables(),category=updateform.getcategory(),photo=itemform.getphoto()) 
     return render_template('updateItem.html',form=updateform)
 
+@app.route('/displayinventory')
+def displayinventory():
+    
+    db = connect_db()
+    cur = db.cursor()
+    cur.execute("SELECT * from inventory order by id")
+    invent = cur.fetchall()
+
+    return render_template('displayinventory.html', invent=invent)
+
+@app.route('/displayinventory/<itemid>')
+def displayitem(itemid):
+    db = connect_db()
+    cur = db.cursor()
+    invent = Inventory.query.filter_by(id=itemid).all()
+
+    return render_template('displayitem.html', invent=invent)
+
+
 def connect_db():
-    return psycopg2.connect(host="localhost",database="project1", user="project1", password="project1")
+    return psycopg2.connect(host="localhost",database="present", user="present", password="present")
 
 def get_uploaded_images():
     rootdir = os.getcwd()
@@ -122,8 +168,8 @@ def complaint():
             return render_template('result.html',fname=form.get_fname(),lname=form.get_lname(),email=form.get_email(),subject=form.get_subject(),message=form.get_message())
     return render_template('complaint.html',form=form)
 
-def connect_db():
-     return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="ood")
+# def connect_db():
+#      return psycopg2.connect(host="localhost",database="present", user="present", password="present")
 
 @app.route('/signup', methods=['GET', 'POST'])
 def Signup():

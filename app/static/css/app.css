@@ -1,10 +1,9 @@
 body {
     padding-top: 5rem;
-    padding-right: 20px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     text-align: center;
-    align-items: center;
-    justify-content: center;
+   /* align-items: center;
+    justify-content: center; */
 }
 .Intro{
     padding-bottom: 10px;
@@ -387,3 +386,57 @@ footer{
 
 }
 
+.Inventory{
+    display: flex;
+    flex-direction: column;
+}
+
+/* .above{
+    background-color: rgb(179, 223, 253);
+} */
+
+.gallery{
+    /* background-image: url("wholesale.png"); */
+    /* background: url(wholesale.jpg) no-repeat center center fixed; */
+    background-size: cover;
+    z-index: -1; 
+    /* right: 0;
+    left: 0;
+    bottom: 0; */
+}
+
+.Picture{
+    height: 200px;
+    width: 150px;
+    padding: 5px;
+}
+
+.cards{
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    grid-template-rows: auto;
+    gap: 40px;
+}
+
+.card{
+    height: 450px;
+    width: 300px;
+    -webkit-box-shadow: inset 1px 1px 1px 0px grey; 
+    box-shadow: inset 1px 1px 1px 0px grey; 
+}
+
+.card:hover{
+    background-color: rgb(179, 223, 253);
+}
+
+/* .card:nth-child(-n + 4){
+    background-color: rgb(129, 205, 255);
+} */
+
+/* .container{
+    background-color: greenyellow;
+} */
+
+footer{
+    bottom: 0%;
+}

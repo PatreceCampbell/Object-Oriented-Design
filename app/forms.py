@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, DecimalField, IntegerField, FileField
 from wtforms.validators import DataRequired, Email, InputRequired, Regexp
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 
 class SignupForm(FlaskForm):
@@ -135,14 +136,15 @@ class ComplaintForm(FlaskForm):
         return self.message
 
 class AddItemForm(FlaskForm):
-    item_name = StringField('Item Name', validators=[DataRequired(), Regexp("/^[A-Za-z]+$/", flags=0, message="String Required")])
+    item_name = StringField('Item Name', validators=[DataRequired()])
     cost_price = DecimalField('Cost Price', validators=[DataRequired()])
     selling_price = DecimalField('Selling Price', validators=[DataRequired()])
     quantity_instock = IntegerField('Quantity Instock', validators=[DataRequired()])
     quantity_sold = IntegerField('Quantity Sold', validators=[DataRequired()])
     supplier = StringField('Supplier', validators=[DataRequired()])
     perishables = IntegerField('Perishables', validators=[DataRequired()])
-    photo = FileField('Item Image', validators=[DataRequired()])
+    category = StringField('Category', validators=[DataRequired()])
+    photo = FileField('Photo', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'Photos only!'])])
 
     def set_item(self,item_name):
         self.item_name = item_name
@@ -185,6 +187,12 @@ class AddItemForm(FlaskForm):
         
     def get_perishables(self):
         return self.perishables 
+
+    def set_category(self,category):
+        self.category = category 
+        
+    def get_category(self):
+        return self.category 
     
     def set_photo(self,photo):
         self.photo = photo 
@@ -200,6 +208,7 @@ class UpdateItemForm(FlaskForm):
     quantitysold = IntegerField('Quantity Sold', validators=[DataRequired()])
     supplier = StringField('Supplier', validators=[DataRequired()])
     perishables = IntegerField('Perishables', validators=[DataRequired()])
+    category = StringField('Category', validators=[DataRequired()])
     photo = FileField('Item Image', validators=[DataRequired()])
 
     def setitem(self,itemname):
@@ -244,6 +253,11 @@ class UpdateItemForm(FlaskForm):
     def getperishables(self):
         return self.perishables 
 
+    def setcategory(self,category):
+        self.category = category 
+        
+    def getcategory(self):
+        return self.category 
     
     def setphoto(self,photo):
         self.photo = photo 

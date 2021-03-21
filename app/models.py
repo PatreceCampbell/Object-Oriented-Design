@@ -68,3 +68,29 @@ class Complaint(db.Model):
     def __repr__(self):
         return f"Complaint('{self.first_name}','{self.last_name}','{self.email}','{self.subject}','{self.message}')" 
         
+class Inventory(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    item_name = db.Column(db.String(1000))
+    cost_price = db.Column(db.Numeric(1000,2))
+    selling_price = db.Column(db.Numeric(1000,2))
+    quantity_instock = db.Column(db.Integer)
+    quantity_sold = db.Column(db.Integer)
+    supplier = db.Column(db.String(1000))
+    perishables = db.Column(db.Integer)
+    category = db.Column(db.String(1000))
+    photo = db.Column(db.String(1000))
+
+    def __init__(self,item_name,cost_price,selling_price,quantity_instock,quantity_sold,supplier,perishables,category,photo):
+        self.item_name = item_name
+        self.cost_price = cost_price
+        self.selling_price = selling_price
+        self.quantity_instock = quantity_instock
+        self.quantity_sold = quantity_sold
+        self.supplier = supplier
+        self.perishables = perishables
+        self.category = category
+        self.photo = photo
+
+    # def __repr__(self):
+    #     return f"Complaint('{self.first_name}','{self.last_name}','{self.email}','{self.subject}','{self.message}')" 
+        
