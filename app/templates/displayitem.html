@@ -5,34 +5,21 @@
 <h1>INVENTORY</h1>
 <div class="Card" id="CardIndi">
     {% for item in invent %}
-    <div class="card" id="cardy">
+    <div class="card" id="card2">
         <div class="image" id="image">
-            <img class="Pic" id="Pics" src="{{ url_for('get_image', filename=item.photo)}}" />
+            <img class="Picture" id="Picture" src="{{ url_for('get_image', filename=item.photo)}}" />
         </div>
         <div class="info2" id="info">
-            <h4 class="item_name">{{item.item_name}}</h4>
-        </div>
-        <div class="Side" id="Side">
+            <h4 class="item_name">{{invent.item_name}}</h4>
             <p class="SellingPrice">{{ "Cost Price: " + "$" + item.selling_price|string}}</p>
-        </div>   
-        <div class="Side" id="Side">
-                <p class="CostPrice">{{"Selling Price" + "$" + item.cost_price|string}}</p>
-        </div>
-        <div class="Instock" id="Instock">
+            <p class="CostPrice">{{"Selling Price" + "$" + item.cost_price|string}}</p>
             <p class="QuantityInstock">{{"Instock: " + item.quantity_instock|string}}</p>
-        </div>
-        <div class="Sold" id="Sold">
             <p class="QuantitySold">{{"Sold: " + item.quantity_sold|string}}</p>
-        </div>
-        <div class="info" id="info">
             <p class="Supplier">{{"Supplier: " + item.supplier|string}}</p>
-        </div>
-        <div class="info" id="info">
             <p class="Perishable">{{"perishables: " + item.perishables|string}}</p>
-        </div>
-        <div class="info" id="info">
             <p class="Category">{{"Category: " + item.category|string}}</p>
         </div>
+        <div class="button3">
             <a class="btn" id="btn2">Delete Item</a>
         </div>
     </div>

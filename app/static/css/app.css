@@ -332,10 +332,6 @@ video{
     outline: none;
 }
 
-.label{
-    text-align: left;
-}
-
 .SignupBody{
     background-color: rgb(3, 61, 95);
     width: 450px;
@@ -418,8 +414,15 @@ footer{
     gap: 40px;
 }
 
-.card{
+#card1{
     height: 450px;
+    width: 300px;
+    -webkit-box-shadow: inset 1px 1px 1px 0px grey; 
+    box-shadow: inset 1px 1px 1px 0px grey; 
+}
+
+#card2{
+    height: 550px;
     width: 300px;
     -webkit-box-shadow: inset 1px 1px 1px 0px grey; 
     box-shadow: inset 1px 1px 1px 0px grey; 

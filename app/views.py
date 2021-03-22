@@ -119,14 +119,13 @@ def displayinventory():
 
     return render_template('displayinventory.html', invent=invent)
 
-@app.route('/displayinventory/<itemid>')
+@app.route('/displayitem/<itemid>')
 def displayitem(itemid):
     db = connect_db()
     cur = db.cursor()
     invent = Inventory.query.filter_by(id=itemid).all()
 
     return render_template('displayitem.html', invent=invent)
-
 
 def connect_db():
     return psycopg2.connect(host="localhost",database="present", user="present", password="present")
