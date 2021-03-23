@@ -5,7 +5,7 @@
   <div class="UpdateItemBottom" id="UpdateItemBottom">
     <div class="UpdateItemForm center-block">
       <h2>UPDATE ITEMS IN INVENTORY</h2>
-      <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_item', id=id) }}" >
+      <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_item', id=id.id) }}" >
         {{ form.csrf_token }}
         <div class="form-group">
           {{ form.itemname.label }}
@@ -43,7 +43,7 @@
             {{form.photo.label}}
             {{form.photo(class="form-control")}}
         </div>
-        <button type="submit" name="submit" class="btn3 btn-primary">Add Item</button>
+        <button type="submit" name="submit" class="btn3 btn-primary">Update Item</button>
       </form>
     </div>
 {% endblock %}

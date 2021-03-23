@@ -80,159 +80,48 @@ def additem():
             flash_errors(form)    
     return render_template('addItem.html',form=form)
 
-@app.route('/updateitem/<itemid>', methods=["GET", "POST"])
-def updateitem(itemid):
-    updateitemid = Inventory.query.filter_by(id=itemid).first()
-
-    form = UpdateItemForm()
-    form.itemname.data=updateitemid.item_name
-    form.costprice.data=updateitemid.cost_price
-    form.sellingprice.data=updateitemid.selling_price
-    form.quantityinstock.data=updateitemid.quantity_instock
-    form.quantitysold.data=updateitemid.quantity_sold
-    form.supplier.data=updateitemid.supplier
-    form.perishables.data=updateitemid.perishables
-    form.category.data=updateitemid.category
-    form.photo.data=updateitemid.photo
-    if request.method=='POST':
-        if form.validate_on_submit():
-            form.set_item(form.item_name.data)
-            form.set_cost_price(form.cost_price.data)
-            form.set_selling_price(form.selling_price.data)
-            form.set_quantity_instock(form.quantity_instock.data)
-            form.set_quantity_sold(form.quantity_sold.data)
-            form.set_supplier(form.supplier.data)
-            form.set_perishables(form.perishables.data)
-            form.set_category(form.category.data)
-            photo = form.photo.data
-            form.set_photo(photo)
-            item_name = form.get_item
-            cost_price = form.get_cost_price
-            selling_price = form.get_selling_price
-            quantity_instock = form.get_quantity_instock
-            quantity_sold = form.get_quantity_sold
-            supplier = form.get_supplier
-            category = form.get_category
-            perishables = form.get_perishables
-
-
-            filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-
-            db=connect_db()
-            cur=db.cursor()
-            sql="INSERT INTO inventory (item_name,cost_price,selling_price,quantity_instock,quantity_sold,supplier,perishables,category,photo) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql,(form.get_item(),form.get_cost_price(),form.get_selling_price(),form.get_quantity_instock(),form.get_quantity_sold(),form.get_supplier(),form.get_perishables(),form.get_category(),filename))
-            db.commit()
-    
-            flash('Item Added', 'success')
-            return redirect(url_for('displayinventory'))
-            # return render_template('result.html',item=form.get_item(),cost_price=form.get_cost_price(),selling_price=form.get_selling_price(),quantity_instock=form.get_quantity_instock(),quantity_sold=form.get_quantity_sold(),supplier=form.get_supplier(),perishables=form.get_perishables(), photo=form.get_photo())
-        else:
-            flash_errors(form)    
-    return render_template('updateItem.html',updateitemid=updateitemid,form=form)
-    # form=UpdateItemForm()
-    # updateitemid = Inventory.query.filter_by(id=itemid).first()
-
-    # if request.method=='POST':
-    #     if form.validate_on_submit():
-
-            # form.itemname.data=updateitemid.item_name
-            # form.costprice.data=updateitemid.cost_price
-            # form.sellingprice.data=updateitemid.selling_price
-            # form.quantityinstock.data=updateitemid.quantity_instock
-            # form.quantitysold.data=updateitemid.quantity_sold
-            # form.supplier.data=updateitemid.supplier
-            # form.perishables.data=updateitemid.perishables
-            # form.category.data=updateitemid.category
-            # form.photo.data=updateitemid.photo
-
-            # updateitemid.item_name=form.itemname.data
-            # updateitemid.cost_price=form.costprice.data
-            # updateitemid.selling_price= form.sellingprice.data
-            # updateitemid.quantity_instock= form.quantityinstock.data
-            # updateitemid.quantity_sold= form.quantitysold.data
-            # updateitemid.supplier=form.supplier.data
-            # updateitemid.perishables= form.perishables.data
-            # updateitemid.category=form.category.data
-            # updateitemid.photo=form.photo.data
-            # db.session.commit()
-    #         return redirect(url_for('displayinventory'))
-    
-
-    # return render_template('updateItem.html',form=form)
-    # form.setitem(form.itemname.data)
-    # form.setcostprice(form.costprice.data)
-    # form.sellingprice(form.sellingprice.data)
-    # form.setquantityinstock(form.quantityinstock.data)
-    # form.setquantitysold(form.quantitysold.data)
-    # form.setsupplier(form.supplier.data)
-    # form.setperishables(form.perishables.data)
-    # form.setcategory(form.category.data)
-    # photo = form.photo.data
-    # form.set_photo(photo)
-    # item_name = form.get_item
-    # cost_price = form.get_cost_price
-    # selling_price = form.get_selling_price
-    # quantity_instock = form.get_quantity_instock
-    # quantity_sold = form.get_quantity_sold
-    # supplier = form.get_supplier
-    # category = form.get_category
-    # perishables = form.get_perishables
-
-
-    # filename = secure_filename(photo.filename)
-    # photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-    # db=connect_db()
-    # cur=db.cursor()
-    # cur.execute("UPDATE inventory SET item_name=%s,cost_price%s,selling_price%s,quantity_instock%s,quantity_sold%s,supplier%s,perishables%s,category%s,photo%s WHERE id=%s",(form.getitem(),form.getcostprice(),form.getsellingprice(),form.getquantityinstock(),form.getquantitysold(),form.getsupplier(),form.getperishables(),form.getcategory(),form.getphoto()))
-    # db.commit()
-    # flash('Item Updated', 'success')
-    # return render_template('result.html',item=form.getitem(),costprice=form.getcostprice(),sellingprice=form.getsellingprice(),quantityinstock=form.getquantityinstock(),quantitysold=form.getquantitysold(),supplier=form.getsupplier(),perishables=form.getperishables(),category=form.getcategory(),photo=itemform.getphoto()) 
-
-@app.route('/edit_item/<id>',methods=['GET','POST'])
+@app.route('/edit_item/<id>', methods=['GET','POST'])
 def edit_item(id):
+    newid=id
     id = Inventory.query.filter_by(id=id).first()
     form=UpdateItemForm()
 
-
-    form.itemname.data=id.item_name
-    form.costprice.data=id.cost_price
-    form.sellingprice.data=id.selling_price
-    form.quantityinstock.data=id.quantity_instock
-    form.quantitysold.data=id.quantity_sold
-    form.supplier.data=id.supplier
-    form.perishables.data=id.perishables
-    form.category.data=id.category
-    form.photo.data=id.photo
+    if request.method=="GET":
+        form.itemname.data=id.item_name
+        form.costprice.data=id.cost_price
+        form.sellingprice.data=id.selling_price
+        form.quantityinstock.data=id.quantity_instock
+        form.quantitysold.data=id.quantity_sold
+        form.supplier.data=id.supplier
+        form.perishables.data=id.perishables
+        form.category.data=id.category
+        form.photo.data=id.photo
 
     if request.method=="POST":
-        if form.validate_on_submit():
-    
-            id.item_name=form.itemname.data
-            id.cost_price=form.costprice.data
-            id.selling_price= form.sellingprice.data
-            id.quantity_instock= form.quantityinstock.data
-            id.quantity_sold= form.quantitysold.data
-            id.supplier=form.supplier.data
-            id.perishables= form.perishables.data
-            id.category=form.category.data
-            id.photo=form.photo.data
-            db.session.commit()
 
-            flash('Updated','success')
-            return redirect(url_for('displayinventory',id=id.id))
+        form.setitem(form.itemname.data)
+        form.setcostprice(form.costprice.data)
+        form.setsellingprice(form.sellingprice.data)
+        form.setquantityinstock(form.quantityinstock.data)
+        form.setquantitysold(form.quantitysold.data)
+        form.setsupplier(form.supplier.data)
+        form.setperishables(form.perishables.data)
+        form.setcategory(form.category.data)
+        photo = form.photo.data
+        form.setphoto(photo)
+        filename = secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    # if request.method=='POST' and form.validate_on_submit():
-    #     db=connect_db()
-    #     cur=db.cursor()
-    #     cur.execute("UPDATE inventory SET item_name=%s,cost_price=%s,selling_price=%s,quantity_instock=%s,quantity_sold=%s,supplier=%s,perishables=%s,category=%s,photo=%s WHERE id=%s",(form.get_item(),form.get_cost_price(),form.get_selling_price(),form.get_quantity_instock(),form.get_quantity_sold(),form.get_supplier(),form.get_perishables(),form.get_category(),form.setphoto()))
-    #     db.commit()
-    #     flash('Updated','success')
-    #     return redirect(url_for('displayinventory'))
-    return render_template('updateItem.html',form=form)
+
+        db=connect_db()
+        cur=db.cursor()
+        sql="UPDATE inventory SET item_name=%s,cost_price=%s,selling_price=%s,quantity_instock=%s,quantity_sold=%s,supplier=%s,perishables=%s,category=%s,photo=%s WHERE id=%s"
+        cur.execute(sql,(form.getitem(),form.getcostprice(),form.getsellingprice(),form.getquantityinstock(),form.getquantitysold(),form.getsupplier(),form.getperishables(),form.getcategory(),filename,newid))
+        db.commit()
+
+        flash('Updated','success')
+        return redirect(url_for('displayinventory'))
+    return render_template('updateItem.html',form=form, id=id)
 
 @app.route('/view-inventory',)
 def displayinventory():

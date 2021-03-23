@@ -34,9 +34,9 @@
         <form action="{{url_for('displayitem', itemid = inventorylst.id)}}" method="POST">
           <td><input type="submit" class="btn btn-primary" value="View Item"></td>
         </form>
-        <form action="{{url_for('edit_item', id = inventorylst.id)}}" method="POST">
-          <td><input type="submit" class="btn btn-primary" value="Update Item"></td>
-        </form>
+        <!-- <form action="{{url_for('edit_item', id = inventorylst.id)}}" method="POST"> -->
+          <td><a class="btn btn-primary" href="/edit_item/{{inventorylst.id}}"> Update Item</a></td>
+        <!-- </form> -->
         <td><button type="btn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Delete Item</button></td>
       </tr>
         <!-- Modal -->
