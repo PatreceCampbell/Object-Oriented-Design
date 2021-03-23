@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+<h1>INVENTORY</h1>
+<div class="Card" id="CardIndi">
+    <div class="card" id="card2">
+        <div class="image" id="image">
+        </div>
+        <div class="info2" id="info">
+            <h4 class="item_name">{{invent.item_name}}</h4>
+            <p class="SellingPrice">{{ "Cost Price: " + "$" + invent.selling_price|string}}</p>
+            <p class="CostPrice">{{"Selling Price" + "$" + invent.cost_price|string}}</p>
+            <p class="QuantityInstock">{{"Instock: " + invent.quantity_instock|string}}</p>
+            <p class="QuantitySold">{{"Sold: " + invent.quantity_sold|string}}</p>
+            <p class="Supplier">{{"Supplier: " + invent.supplier|string}}</p>
+            <p class="Perishable">{{"perishables: " + invent.perishables|string}}</p>
+            <p class="Category">{{"Category: " + invent.category|string}}</p>
+        </div>
+        <div class="button3">
+            <a class="btn" id="btn2">Delete Item</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

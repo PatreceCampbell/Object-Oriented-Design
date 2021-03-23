@@ -1,27 +1,34 @@
 {% extends "base.html" %}
-
 {% block main %}
-<div class="LoginBody" id="LoginBody">
-  <div class="LoginTop" id="LoginTop">
-    <img src="../static/Images/logo2.png" alt="Logo">
-  </div>
-  <div class="login-form center-block">
-    <h2>Login</h2>
-    {% include 'flash_messages.html' %}
-    <form action="{{ url_for('login') }}" method="post">
-      {{ form.csrf_token }}
-      <div class="form-group">
-        {{ form.username.label }}
-        {{ form.username(class='form-control', placeholder="Enter your username") }}
-      </div>
-      <div class="form-group">
-        {{ form.password.label }}
-        {{ form.password(class='form-control') }}
-      </div>
-      <button type="submit" name="submit" class="btn2 btn-primary btn-block">Log in</button>
+<div class="p-5 h-100 w-100" style="border-radius:10px; background-color:white;box-shadow:  0px 0px 30px rgb(9, 73, 110);">
+  <div class='d-flex justify-content-center' >
+    <div>
+      <img class="h-100 rounded w-100" src="../static/Images/img.png" alt="Logo">
+    </div>
+  
+    <form action="{{ url_for('login') }}" class=""method="POST">
+      <div class="LoginBody"id="LoginBody" >
+        <div class="LoginTop" id="LoginTop">
+          <img src="../static/Images/logo2.png" alt="Logo">
+        </div>
+  
+        <div class="login-form pb-5 center-block">
+            {{ form.csrf_token }}
+            <div class="form-group">
+              {% include 'flash_messages.html' %}
+              {{ form.username.label }}
+              {{ form.username(class='form-control', placeholder="Enter your username") }}
+            </div>
+            <div class="form-group">
+              {{ form.password.label }}
+              {{ form.password(class='form-control', placeholder="Enter your password") }}
+            </div>
+          <button type="submit" name="submit" class="btn2 btn-primary btn-block">Log in</button>
+          <h5>Don't have an account? <a class="SignupLink" href="{{ url_for('Signup') }}">Sign Up</a></h5>
+        </div>
+      </div>      
     </form>
-    <h5>Don't have an account? <a class="SignupLink" href="{{ url_for('Signup') }}">Sign Up</a></h5>
   </div>
-</div>  
-
+  
+</div>
 {% endblock %}

@@ -81,7 +81,7 @@ span{
     background-color: white;
     padding: 10px;
     border-radius: 0px 20% 2% 0px;
-    box-shadow: 0 10px 25px rgb(9, 73, 110);
+    /* box-shadow: 0 10px 25px rgb(9, 73, 110); */
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -94,7 +94,7 @@ span{
     text-align: center;
     border-radius: 2% 0px 0px 20%;
     color: white;
-    box-shadow: 0 10px 25px rgb(9, 73, 110);   
+    /* box-shadow: 0 10px 25px rgb(9, 73, 110);    */
 }
 
 .LeftSide img{
@@ -215,12 +215,13 @@ button:hover{
 }
 
 .LoginBody{
-    background-color: rgb(3, 61, 95);
+    background-color: #033d5f;
     width: 450px;
     height: 600px;
     text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    box-shadow: 0 10px 25px rgb(9, 73, 110);  
+    /* box-shadow:  5px 0px 30px rgb(9, 73, 110);   */
+    border-radius: 20% 2% 2% 0%;
 
 }
 
@@ -231,6 +232,8 @@ button:hover{
 .LoginTop{
     background-color: rgb(3, 61, 95);
     padding: 20px;
+    border-radius: 0% 2% 2% 0%;
+
 }
 
 
@@ -242,9 +245,10 @@ button:hover{
 .login-form{
     background-color: white;
     padding: 20px;
-    height: 420px;
+    height: 430px;
     text-align: center;
-    border-radius: 20% 0% 0% 2%;
+    border-radius: 20% 2% 2% 0%;
+
 }
 
 .login-form h2{
@@ -285,7 +289,7 @@ button:hover{
     height: 900px;
     text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    box-shadow: 0 10px 25px rgb(9, 73, 110);  
+    /* box-shadow: 0 10px 25px rgb(9, 73, 110);   */
 }
 
 .Signup-form{
