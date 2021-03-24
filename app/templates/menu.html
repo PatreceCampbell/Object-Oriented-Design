@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+<div class="Inventory" id="Inventory">
+    <h1>INVENTORY</h1>
+    <div class="above" id="above">
+        <img class="gallery" src="/uploads/index.jpeg" alt="Wholesale">
+        <a class="btn" href="{{ url_for('additem') }}">Add Item</a>
+    </div>
+    <div class="cards" id="CardIndi">
+        {% for item in invent %}
+        <div class="card" id="card1">
+            <div class="image" id="image">
+                <img class="Picture" id="Picture" src="{{ url_for('get_image', filename=item[9])}}" />
+            </div>
+            <div class="info" id="info">
+                <h4 class="item_name">{{item[1]}}</h4>
+                <p class="CostPrice">{{"Selling Price: " + "$" + item[3]|string}}</p>
+                <p class="QuantityInstock">{{"Instock: " + item[4]|string}}</p>
+                <p class="Category">{{"Category: " + item[8]|string}}</p>
+                <a class="btn" id="btn2" href="{{url_for('displayitem', itemid=item[0])}}">View Item</a> 
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

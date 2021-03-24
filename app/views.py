@@ -133,14 +133,19 @@ def displayitem(itemid):
     invent = Inventory.query.filter_by(id=itemid).first()
     return render_template('individual_item.html', invent=invent)
 
-@app.route('/deleteitem/<itemid>', methods=["POST"])
+@app.route('/Menu')
+def menu():
+    item = Inventory.query.all()
+    return render_template('view_inventory.html',item=item)
+
+@app.route('/deleteitem/<itemid>', methods=["GET"])
 def deleteitem(itemid):
-    db=connect_db()
-    cur=db.cursor()
-    cur.execute("DELETE FROM inventory where id=%s",[itemid])
-    db.commit()
+    # db=connect_db()
+    # cur=db.cursor()
+    # cur.execute("DELETE FROM inventory where id=%s",[itemid])
+    # db.commit()
     flash('Item Deleted', 'success')
-    return redirect(url_for('displayinventory'))
+    return itemid
 
 
 
