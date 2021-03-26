@@ -36,7 +36,7 @@ def requires_roles(*roles):
 def home():
     """Render website's home page."""
     return render_template('home.html')
-
+@requires_roles('admin')
 @app.route('/additem', methods=["GET", "POST"])
 def additem():
     form = AddItemForm()
@@ -81,6 +81,8 @@ def additem():
     return render_template('addItem.html',form=form)
 
 @app.route('/edit_item/<id>', methods=['GET','POST'])
+@requires_roles('admin')
+
 def edit_item(id):
     newid=id
     id = Inventory.query.filter_by(id=id).first()
@@ -123,31 +125,172 @@ def edit_item(id):
         return redirect(url_for('displayinventory'))
     return render_template('updateItem.html',form=form, id=id)
 
-@app.route('/view-inventory',)
+def MagerDicts(dict1,dict2):
+    if isinstance(dict1,list) and isinstance(dict2,list):
+        return dict1+dict2
+    elif isinstance(dict1,dict) and isinstance(dict2,dict):
+        return dict(list(dict1.items())+list(dict2.items()))
+    return False
+
+@app.route('/addtocart', methods=['POST', 'GET'])
+@requires_roles('customer')
+@login_required
+def addtocart():
+    try:
+        product_id=request.form.get('product_id')
+        quantity=request.form.get('quantity')
+        product=Inventory.query.filter_by(id=product_id).first()
+        if product_id and quantity and request.method=='POST':
+            DictItems={product_id:{'name': product.item_name,'price':float(product.selling_price),'quantity': quantity,'stock':product.quantity_instock }}
+            if 'Shoppingcart' in session:
+                print(session['Shoppingcart'])
+                if product_id in session['Shoppingcart']:
+                    for key,item in session['Shoppingcart'].items():
+                        if int(key)==int(product_id):
+                            session.modified=True
+                            item['quantity'] += 1
+                        # Check over part 28 still not working
+                else:
+                    session['Shoppingcart']=MagerDicts(session['Shoppingcart'],DictItems)
+                    return redirect("menu")
+            else:
+                session['Shoppingcart']=DictItems
+                return product_id
+    except Exception as e:
+        print(e)
+    finally:
+    # pass
+        return redirect("menu")
+
+@app.route("/carts")
+def getCart():
+    if 'Shoppingcart' not in session:
+        return redirect("menu")
+    subtotal=0
+    grandsubtotal=0
+    grandtotal=0
+    tax=0
+    for key,product in session['Shoppingcart'].items():
+        subtotal+=float(product['price'])*int(product['quantity'])
+        tax=round((0.15 * float(subtotal)),2)
+        grandtotal=round(float(subtotal)+float(tax),2)
+        grandsubtotal=subtotal
+    return render_template('checkout.html',grandsubtotal=grandsubtotal,tax=tax,grandtotal=grandtotal)
+
+@app.route("/updatecart/<code>", methods=["POST"])
+@requires_roles('customer')
+@login_required
+def updatecart(code):
+    if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
+        return redirect('menu')
+    if request.method=='POST':
+        quantity=request.form.get('quantity')  
+        session.modifed=True
+        for key,item in session['Shoppingcart'].items():
+            if key==code:
+                item['quantity']=quantity
+                flash('Item Update','success')
+                return redirect(url_for('getCart'))
+        return redirect(url_for('getCart'))
+
+
+@app.route("/deleteitemcart/<code>")
+@requires_roles('customer')
+@login_required
+def deleteitemcart(code):
+    if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
+        return redirect('menu')
+    session.modifed=True
+    for key,item in session['Shoppingcart'].items():
+        if key==code:
+            session['Shoppingcart'].pop(key,None)
+            flash('Item Removed','success')
+            return redirect(url_for('getCart'))
+    return redirect(url_for('getCart'))
+
+
+@app.route("/clearcart")
+@requires_roles('customer')
+@login_required
+def clearcart():
+    session.pop('Shoppingcart',None)
+    return redirect(url_for('getCart'))    
+
+
+@app.route('/view-inventory')
+@requires_roles('admin')
+@login_required
 def displayinventory():
-    inventorylst = Inventory.query.all()
+    inventorylst = Inventory.query.order_by('id').all()
     return render_template('view_inventory.html',inventorylst=inventorylst)
 
+@app.route('/view-complaints')
+@requires_roles('admin')
+@login_required
+def displaycomplaints():
+    complaint = Complaint.query.order_by('id').all()
+    return render_template('viewcomplaints.html',complaint=complaint)
+
+@app.route('/deletecomplaint/<id>', methods=["GET"])
+@requires_roles('admin')
+@login_required
+def deletecom(id):
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute("DELETE FROM complaint where id=%s",[id])
+    db.commit()
+    flash('Complaint Deleted', 'success')
+    return redirect(url_for('displaycomplaints'))
+
+@app.route('/view-subscribers')
+@requires_roles('admin')
+@login_required
+def displaysubscribers():
+    subscribers = Subscriber.query.order_by('id').all()
+    return render_template('viewsubscribers.html',subscribers=subscribers)
+
+@app.route('/deletesubscriber/<id>', methods=["GET"])
+@requires_roles('admin')
+@login_required
+def deletesub(id):
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute("DELETE FROM Subscriber where id=%s",[id])
+    db.commit()
+    flash('Subscriber Deleted', 'success')
+    return redirect(url_for('displaysubscribers'))
+
+
 @app.route('/displayitem/<itemid>', methods=["POST"])
+@requires_roles('admin')
+@login_required
 def displayitem(itemid):
     invent = Inventory.query.filter_by(id=itemid).first()
     return render_template('individual_item.html', invent=invent)
 
-@app.route('/Menu')
+@app.route('/menu')
+@requires_roles('customer')
+@login_required
 def menu():
-    item = Inventory.query.all()
-    return render_template('view_inventory.html',item=item)
+    invent = Inventory.query.all()
+    return render_template('menu.html',invent=invent)
 
 @app.route('/deleteitem/<itemid>', methods=["GET"])
+@requires_roles('admin')
+@login_required
 def deleteitem(itemid):
-    # db=connect_db()
-    # cur=db.cursor()
-    # cur.execute("DELETE FROM inventory where id=%s",[itemid])
-    # db.commit()
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute("DELETE FROM inventory where id=%s",[itemid])
+    db.commit()
     flash('Item Deleted', 'success')
-    return itemid
+    return redirect(url_for('displayinventory'))
 
-
+@app.route('/checkout')
+@requires_roles('customer')
+@login_required
+def checkout():
+    return render_template('checkout.html')
 
 def connect_db():
     return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="oodproject")
@@ -170,6 +313,7 @@ def get_image(filename):
 
 @app.route('/complaint', methods=["GET", "POST"])
 @login_required
+@requires_roles('customer')
 def complaint():
     form=ComplaintForm()
     if request.method=='POST':
@@ -185,7 +329,8 @@ def complaint():
             sql="INSERT INTO complaint (first_name,last_name,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
             cur.execute(sql,(form.get_fname(),form.get_lname(),form.get_email(),form.get_subject(),form.get_message()))
             db.commit()
-    
+
+            flash("Complaint Sent!", "success")    
             return render_template('result.html',fname=form.get_fname(),lname=form.get_lname(),email=form.get_email(),subject=form.get_subject(),message=form.get_message())
     return render_template('complaint.html',form=form)
 
@@ -220,7 +365,7 @@ def Signup():
 
 @app.route('/Mailing List', methods=['GET', 'POST'])
 @login_required
-@requires_roles('admin')
+@requires_roles('customer')
 def Mailing():
     """Render the website's contact page."""
     subscriberform = SubscriberForm()
@@ -272,6 +417,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    # session.clear()
     flash('You have been logged out.', 'danger')
     return redirect(url_for('home'))
 

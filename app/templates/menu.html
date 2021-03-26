@@ -1,29 +1,32 @@
 {% extends 'base.html' %}
 
 {% block main %}
-
-<div class="Inventory" id="Inventory">
-    <h1>INVENTORY</h1>
+    <h1>Ordering Menu</h1>
     <div class="above" id="above">
         <img class="gallery" src="/uploads/index.jpeg" alt="Wholesale">
-        <a class="btn" href="{{ url_for('additem') }}">Add Item</a>
     </div>
-    <div class="cards" id="CardIndi">
-        {% for item in invent %}
-        <div class="card" id="card1">
-            <div class="image" id="image">
-                <img class="Picture" id="Picture" src="{{ url_for('get_image', filename=item[9])}}" />
-            </div>
-            <div class="info" id="info">
-                <h4 class="item_name">{{item[1]}}</h4>
-                <p class="CostPrice">{{"Selling Price: " + "$" + item[3]|string}}</p>
-                <p class="QuantityInstock">{{"Instock: " + item[4]|string}}</p>
-                <p class="Category">{{"Category: " + item[8]|string}}</p>
-                <a class="btn" id="btn2" href="{{url_for('displayitem', itemid=item[0])}}">View Item</a> 
-            </div>
+    <br>
+<div class="card-layout">
+    {% for item in invent %}
+    <div class="card" style="width: 20rem;">
+        <div class="h-100 w-100">
+            <img class="card-img-top h-100 w-100" src="/uploads/{{item.photo}}" alt="Card image cap">
         </div>
-        {% endfor %}
-    </div>
+        <div class="card-body">
+          <h5 class="card-title text-center">{{item.item_name}}</h5>
+          <h5 class="card-title text-center"style="color:black;">{{"Price: " + "$" + item.selling_price|string}}</h5>
+          <h5 class="card-title text-center"style="color:black;">{{"Manufactured By: " + item.supplier|string}}</h5>
+          <div class="card-footer bg-transparent border-success text-center">
+            <form action="{{url_for('addtocart')}}" method="POST">
+              <input type="hidden" name="product_id" value="{{item.id}}">
+              <label for="">Quantity:</label>
+              <input type="number" name="quantity" id="" value="1" min="1" max="{{item.quantity_instock}}">
+              <button type="submit" class="btn btn-primary"> Add to Cart</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
 </div>
 
 {% endblock %}

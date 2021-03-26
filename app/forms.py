@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, DecimalField, IntegerField, FileField
+from wtforms import StringField, PasswordField, TextAreaField, DecimalField, IntegerField, FileField, SelectField
 from wtforms.validators import DataRequired, Email, InputRequired, Regexp
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
@@ -143,7 +143,8 @@ class AddItemForm(FlaskForm):
     quantity_sold = IntegerField('Quantity Sold', validators=[DataRequired()])
     supplier = StringField('Supplier', validators=[DataRequired()])
     perishables = IntegerField('Perishables', validators=[DataRequired()])
-    category = StringField('Category', validators=[DataRequired()])
+    # category = SelectField('Category', validators=[DataRequired()] choices = [('Staple'), ('Juice'), ('Tin'), ('Toiletries'), ('Personal Item'), ('Powered'), ('Cooking Essential'), ('Candy'), ('Alcohol'), ('Diary')] validators=[Optional()])
+    category = SelectField('Category', choices=[('Staple'), ('Juice'), ('Tin'), ('Toiletries'), ('Personal Item'), ('Powered'), ('Cooking Essential'), ('Candy'), ('Alcohol'), ('Diary')])
     photo = FileField('Photo', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'Photos only!'])])
 
     def set_item(self,item_name):
@@ -264,4 +265,5 @@ class UpdateItemForm(FlaskForm):
         
     def getphoto(self):
         return self.photo 
+
 

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
+<h1 style="text-align: center; padding-bottom: 10px; color:  #033d5f;">WELCOME TO MAMA B'S ONLINE WHOLESALE!</h1>
 <div class="SignupBody" id="SignBody">
   <div class="LoginTop" id="LoginTop">
     <img src="../static/Images/logo2.png" alt="Logo">
@@ -8,7 +9,7 @@
   <div class="Signup-form center-block" id="Signup-form">
     <h2>Sign Up</h2>
     {% include 'flash_messages.html' %}
-    <form action="{{ url_for('Signup') }}" method="post">
+    <form class="kabian" action="{{ url_for('Signup') }}" method="post">
       {{ form.csrf_token }}
       <div class="form-group">
         {{ form.firstname.label }}
@@ -24,7 +25,7 @@
       </div>
       <div class="form-group">
         {{ form.email.label }}
-        {{ form.email(class='form-control', placeholder="Enter your email address") }}
+        {{ form.email(class='form-control',id='email-regex', placeholder="Enter your email address") }}
       </div>
       <div class="form-group">
         {{ form.password.label }}

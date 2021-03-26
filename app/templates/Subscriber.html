@@ -11,22 +11,22 @@
         <img src="../static/Images/emoji.gif">
     </div>
     <div class="RightSide" id="RightSide">
-        <form method="post" action="{{url_for('Mailing')}}">
+        <form class="kabian" method="post" action="{{url_for('Mailing')}}">
             {{form.csrf_token}}
             <div class="FormClass" id="FormClass">
                 <label>{{form.firstname.label}}</label> <span>(Required)</span>
                 <p>Please enter your first name.</p>
-                {{ form.firstname(class="Field") }}
+                {{ form.firstname(class="Field", id="f_names_co") }}
             </div>
             <div class="FormClass" id="FormClass">
                 <label>{{form.lastname.label}}</label> <span>(Required)</span>
                 <p>Please enter your last name.</p>
-                {{ form.lastname(class="Field") }}
+                {{ form.lastname(class="Field", id="l_names_co") }}
             </div>
             <div class="FormClass" id="FormClass">
                 <label>{{form.email.label}}</label> <span>(Required)</span>
                 <p>Please enter your e-mail address.</p>
-                {{ form.email(class="Field") }}
+                {{ form.email(class="Field", id="email-regex") }}
             </div>
             <div class="Button" id="Button">
                 <button>SUBSCRIBE</button>
