@@ -3,11 +3,10 @@
 {% block main %}
     <h1>Checkout</h1>
     {% include 'flash_messages.html' %}
-
     <table class="table">
         <thead>
           <tr>
-            <th scope="col">Number of Products</th>
+            <th scope="col">Product No.</th>
             <th>Image</th>
             <th scope="col">Name</th>
             <th scope="col">Price</th>
@@ -26,14 +25,14 @@
             <td><img style="height:50px;width:50px;" class="card-img-top " src="/uploads/{{product.image}}" alt="Images" /></td>
             <td>{{product.name}}</td>
             <td>${{product.price}}</td>
-            <td><input type="number" name='quantity' min='1' max='{{product.stock}}' value='{{product.quantity}}'></td>
+            <td><input id="quantityfield" type="number" name='quantity' min='1' max='{{product.stock}}' value='{{product.quantity}}'></td>
             {%if product.quantity|int > 0%}
             {%set subtotal=product.quantity|int * product.price|float%}
             {% endif%}
             <td>${{ subtotal}}</td>
-            <td><button type="submit" class="btn btn-secondary">Update</button></td>
+            <td><button type="submit" class="btn btn-secondary" id="checkoutbutton1">Update</button></td>
            </form>
-            <td><a href="{{url_for('deleteitemcart',code=key)}} " class="btn btn-danger">Remove</a></td>
+            <td><a href="{{url_for('deleteitemcart',code=key)}} " class="btn btn-danger" id="checkoutbutton2">Remove</a></td>
          
         </tr>
           {% endfor%}
@@ -45,8 +44,25 @@
         <h2>Tax: ${{tax}}</h2>
         <h2>Grand Subtotal: ${{grandsubtotal}}</h2>
         <h2>Grand Total: ${{grandtotal}}</h2>
-        <h2><a href="{{url_for('clearcart')}} " class="btn btn-danger">Clear Cart</a></h2>
+        <h2><a href="{{url_for('clearcart')}} " class="btn btn-danger" id="checkoutbutton3">Clear Cart</a></h2>
       </div>
-
-
+      <form action="{{url_for('addtodb')}}" method="POST">
+        {% for key,product in session['Shoppingcart'].items()%}
+        <input type="hidden" name="pid" value="{{current_user.id}}">
+        <input type="hidden" name="firstname" value="{{current_user.first_name}}">
+        <input type="hidden" name="lastname" value="{{current_user.last_name}}">
+        <input type="hidden" name="email" value="{{current_user.email}}">
+        <input type="hidden" name="quantity" value="{{product.quantity}}">
+        <input type="hidden" name="itemname" value="{{product.name}}">
+        <input type="hidden" name="sellingprice" value="{{product.price}}">
+        {%if product.quantity|int > 0%}
+        {%set subtotal=product.quantity|int * product.price|float%}
+        {% endif%}
+        <input type="hidden" name="subtotal" value="{{subtotal}}">
+        <input type="hidden" name="grandtotal" value="{{grandsubtotal}}">
+        <input type="hidden" name="total" value="{{grandtotal}}">
+        <input type="hidden" name="tax" value="{{tax}}">
+        {% endfor%}
+        <button class="btn btn-primary"> Check Out</button>
+      </form>
 {% endblock %}

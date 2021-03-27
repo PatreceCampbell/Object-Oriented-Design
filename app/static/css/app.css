@@ -87,7 +87,6 @@ span{
     background-color: white;
     padding: 10px;
     border-radius: 0px 20% 2% 0px;
-    /* box-shadow: 0 10px 25px rgb(9, 73, 110); */
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -100,7 +99,6 @@ span{
     text-align: center;
     border-radius: 2% 0px 0px 20%;
     color: white;
-    /* box-shadow: 0 10px 25px rgb(9, 73, 110);    */
 }
 
 .LeftSide img{
@@ -179,7 +177,7 @@ button:hover{
 
 .Last img, .First img{
     height: 300px;
-    width: 300px;
+    widthu: 300px;
 }
 
 .form-data{
@@ -358,4 +356,30 @@ tr{
     text-align: center;
     background-color: rgb(3, 61, 95);
     color: white;
+}
+
+#checkoutbutton1{
+    background-color: rgb(255, 187, 0); 
+    color: white;
+    padding: 8px 12px;
+    border: 2px solid white;
+}
+
+#checkoutbutton2{
+    background-color: rgb(248, 87, 87); 
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border: 2px solid white;
+}
+
+#checkoutbutton3{
+    background-color: rgb(1, 196, 1); 
+    color: white;
+    padding: 8px 12px;
+    border: 2px solid black;
+}    
+
+#quantityfield{
+    width: 70px;
 }

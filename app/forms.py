@@ -144,7 +144,7 @@ class AddItemForm(FlaskForm):
     supplier = StringField('Supplier', validators=[DataRequired()])
     perishables = IntegerField('Perishables', validators=[DataRequired()])
     # category = SelectField('Category', validators=[DataRequired()] choices = [('Staple'), ('Juice'), ('Tin'), ('Toiletries'), ('Personal Item'), ('Powered'), ('Cooking Essential'), ('Candy'), ('Alcohol'), ('Diary')] validators=[Optional()])
-    category = SelectField('Category', choices=[('Staple'), ('Juice'), ('Tin'), ('Toiletries'), ('Personal Item'), ('Powered'), ('Cooking Essential'), ('Candy'), ('Alcohol'), ('Diary')])
+    category = SelectField('Category', choices=[('Staple'), ('Juice'), ('Tin'),('Snack'), ('Toiletries'), ('Personal Item'), ('Powered'), ('Cooking Essential'), ('Candy'), ('Alcohol'), ('Diary')])
     photo = FileField('Photo', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'Photos only!'])])
 
     def set_item(self,item_name):

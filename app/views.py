@@ -12,7 +12,7 @@ from flask import render_template, request, redirect, url_for, flash, session, a
 from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
-from app.models import UserProfile, Subscriber, Complaint, Inventory
+from app.models import UserProfile, Subscriber, Complaint, Inventory,CustomerOrders
 from werkzeug.security import check_password_hash,generate_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
@@ -53,16 +53,6 @@ def additem():
             form.set_category(form.category.data)
             photo = form.photo.data
             form.set_photo(photo)
-            item_name = form.get_item
-            cost_price = form.get_cost_price
-            selling_price = form.get_selling_price
-            quantity_instock = form.get_quantity_instock
-            quantity_sold = form.get_quantity_sold
-            supplier = form.get_supplier
-            category = form.get_category
-            perishables = form.get_perishables
-
-
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
@@ -82,7 +72,6 @@ def additem():
 
 @app.route('/edit_item/<id>', methods=['GET','POST'])
 @requires_roles('admin')
-
 def edit_item(id):
     newid=id
     id = Inventory.query.filter_by(id=id).first()
@@ -141,7 +130,7 @@ def addtocart():
         quantity=request.form.get('quantity')
         product=Inventory.query.filter_by(id=product_id).first()
         if product_id and quantity and request.method=='POST':
-            DictItems={product_id:{'name': product.item_name,'price':float(product.selling_price),'quantity': quantity,'stock':product.quantity_instock }}
+            DictItems={product_id:{'name': product.item_name,'price':float(product.selling_price),'quantity': quantity,'stock':product.quantity_instock ,'image':product.photo}}
             if 'Shoppingcart' in session:
                 print(session['Shoppingcart'])
                 if product_id in session['Shoppingcart']:
@@ -162,7 +151,39 @@ def addtocart():
     # pass
         return redirect("menu")
 
+
+@app.route("/addtodb", methods=['POST', 'GET'])
+@requires_roles('customer')
+@login_required
+def addtodb():
+    if request.method=='POST':
+        pid=request.form.get('pid')
+        firstname=request.form.get('firstname')
+        lastname=request.form.get('lastname')
+        email=request.form.get('email')
+        quantity=request.form.get('quantity')
+        itemname=request.form.get('itemname')
+        sellingprice=request.form.get('sellingprice')
+        subtotal=request.form.get('subtotal')
+        grandsubtotal=request.form.get('grandtotal')
+        grandtotal=request.form.get('total')
+        tax=request.form.get('tax')
+
+        customer=CustomerOrders(pid=pid,first_name=firstname,last_name=lastname,email=email,quantity=quantity,item_name=itemname,cost_price=sellingprice,subtotal=subtotal,grandsubtotal=grandsubtotal,total=grandtotal,tax=tax)
+        db.session.add_all(customer)
+        db.session.commit()
+        # db=connect_db()
+        # cur=db.cursor()
+        # sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        # cur.execute(sql,(pid,firstname,lastname,email,quantity,itemname,sellingprice,subtotal,grandsubtotal,grandtotal,tax))
+        # db.commit()
+        return redirect(url_for('menu'))
+    return redirect(url_for('menu'))
+
+
 @app.route("/carts")
+@requires_roles('customer')
+@login_required
 def getCart():
     if 'Shoppingcart' not in session:
         return redirect("menu")
@@ -189,7 +210,7 @@ def updatecart(code):
         for key,item in session['Shoppingcart'].items():
             if key==code:
                 item['quantity']=quantity
-                flash('Item Update','success')
+                flash('Item Updated','success')
                 return redirect(url_for('getCart'))
         return redirect(url_for('getCart'))
 
@@ -382,7 +403,7 @@ def Mailing():
             sql="INSERT INTO subscriber (first_name,last_name,email) VALUES (%s,%s,%s)"
             cur.execute(sql,(subscriberform.get_first(),subscriberform.get_last(),subscriberform.get_email()))
             db.commit()
-            flash("Message successfully sent!", 'success')
+            flash("You've been successfully added!", 'success')
             return redirect(url_for('home'))
         else:
             flash_errors(subscriberform)
@@ -417,7 +438,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    # session.clear()
+    session.clear()
     flash('You have been logged out.', 'danger')
     return redirect(url_for('home'))
 

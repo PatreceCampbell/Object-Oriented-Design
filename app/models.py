@@ -94,23 +94,32 @@ class Inventory(db.Model):
         self.photo = photo
 
 
-# Class CustomerOrders(db.model):
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     first_name = db.Column(db.String(1000))
-#     last_name = db.Column(db.String(1000))
-#     email = db.Column(db.String(1000))
-#     quantity = db.Column(db.Integer)
-#     item_name = db.Column(db.String(1000))
-#     cost_price = db.Column(db.Numeric(1000,2))
-#     category = db.Column(db.String(1000))
-#     photo = db.Column(db.String(1000))
+class CustomerOrders(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    pid=db.Column(db.Integer)
+    first_name = db.Column(db.String(1000))
+    last_name = db.Column(db.String(1000))
+    email = db.Column(db.String(1000))
+    quantity = db.Column(db.Integer)
+    item_name = db.Column(db.String(1000))
+    selling_price = db.Column(db.Numeric(1000,2))
+    subtotal = db.Column(db.Numeric(1000,2))
+    grandsubtotal = db.Column(db.Numeric(1000,2))
+    total = db.Column(db.Numeric(1000,2))
+    tax = db.Column(db.Numeric(1000,2))
 
-#     def __init__(self,first_name,last_name,email,quantity,item_name,cost_price,category,photo):
-#         self.first_name = first_name
-#         self.last_name = last_name
-#         self.email = email
-#         self.quantity = quantity
-#         self.item_name = item_name
-#         self.cost_price = cost_price
-#         self.perishables = perishables
-#         self.photo = photo
+
+
+    def __init__(self,pid,first_name,last_name,email,quantity,item_name,cost_price,subtotal,grandsubtotal,total,tax):
+        self.pid=pid
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.quantity = quantity
+        self.item_name = item_name
+        self.cost_price = cost_price
+        self.subtotal=subtotal
+        self.grandsubtotal=grandsubtotal
+        self.total=total
+        self.tax=tax
+
