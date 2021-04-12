@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="tablediv" style="margin-left:-150px; background-color: rgb(179, 223, 253);">
+  <table class="table" style="width: 100%;">
+    {% include 'flash_messages.html' %}
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col" style="padding-right: 5px;">Item Id</th>
+          <th scope="col">Item Name</th>
+          <th scope="col">Cost Price</th>
+          <th scope="col">Selling Price</th>
+          <th scope="col">Quantity Sold</th>
+          <th scope="col">Quantity Instock</th>
+          <th scope="col">Perishables</th>
+          <th scope="col">Supplier</th>
+          <th scope="col">Category</th>
+          <th scope="col"></th>
+          <th scope="col">Action</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      {% for inventorylst in inventorylst %}
+      <tbody>
+        <tr>
+          <td>{{inventorylst.id}}</td>
+          <td>{{inventorylst.item_name}}</td>
+          <td>{{"$" + inventorylst.cost_price|string}}</td>
+          <td>{{"$" + inventorylst.selling_price|string}}</td>
+          <td>{{inventorylst.quantity_instock}}</td>
+          <td>{{inventorylst.quantity_sold}}</td>
+          <td>{{inventorylst.perishables}}</td>
+          <td>{{inventorylst.supplier}}</td>
+          <td>{{inventorylst.category}}</td>
+          <form action="{{url_for('displayitem', itemid = inventorylst.id)}}" method="POST">
+            <td><input type="submit" class="btn btn-primary btn-md" id="viewbutton" value="View Item" style="background-color: rgb(0, 183, 255); color: white;"></td>
+          </form>
+            <td ><a class="btn btn-primary btn-md" id='editbutton' href="/edit_item/{{inventorylst.id}}" style="background-color: rgb(255, 187, 0); color: white;"> Update Item</a></td>
+
+          <td><a class="btn btn-primary btn-md" id='deletebutton' href="/deleteitem/{{inventorylst.id}}" style="background-color: rgb(248, 87, 87); color: white;"> Delete Item</a></td>
+  
+        </tr>
+      {% endfor %}
+    </table>
+  
+</div>
+
+  
+
+{% endblock %}

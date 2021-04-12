@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<h1 class="d-flex justify-content-center">INVENTORY</h1>
+<div class="d-flex justify-content-center">
+    <div class="card " style="width: 30rem; box-shadow: 15px 15px rgb(69, 70, 70);">
+        <img class="card-img-top h-100 w-100" src="/uploads/{{invent.photo}}" alt="">
+        <div class="card-body" id="cbody">
+          <h3 class="card-title text-center" style="color: rgb(255, 187, 0);">{{invent.item_name|upper}}</h3>
+          <h5 class="SellingPrice">{{"Cost Price: " + "$" + invent.selling_price|string}}</h5>
+          <h5 class="CostPrice">{{"Selling Price: " + "$" + invent.cost_price|string}}</h5>
+          <h5 class="QuantityInstock">{{"Instock: " + invent.quantity_instock|string}}</h5>
+          <h5 class="QuantitySold">{{"Sold: " + invent.quantity_sold|string}}</h5>
+          <h5 class="Supplier">{{"Supplier: " + invent.supplier|string}}</h5>
+          <h5 class="Perishable">{{"Perishables: " + invent.perishables|string}}</h5>
+          <h5 class="Category">{{"Category: " + invent.category|string}}</h5>
+        </div>
+      </div>    
+</div>
+{% endblock %}

@@ -9,21 +9,21 @@
         <img src="../static/Images/logo2.png">
     </div>
     <div class="Middle" id="formdiv">
-        <form method='POST' action="{{url_for('complaint')}}">
+        <form class="kabian" method="POST" action="{{url_for('complaint')}}">
             {{form.csrf_token}}
             <div>
-                {{form.fname.label}} <span class='required'>(Required)</span> <br>{{form.fname.description}} <br>{{form.fname (class="form-data")}}
+                {{form.fname.label}} <span class="required">(Required)</span> <br>{{form.fname.description}} <br>{{form.fname (class="form-data", id="f_names_co")}}
             </div>
             <div>
-                {{form.lname.label}} <span class='required'>(Required)</span> <br>{{form.lname.description}} <br>{{form.lname (class="form-data")}}
-            </div>
-            <br>
-            <div>
-                {{form.email.label}} <span class='required'>(Required)</span> <br>{{form.email.description}} <br>{{form.email (class="form-data")}}
+                {{form.lname.label}} <span class="required">(Required)</span> <br>{{form.lname.description}} <br>{{form.lname (class="form-data", id="l_names_co")}}
             </div>
             <br>
             <div>
-                {{form.subject.label}} <span class='required'>(Required)</span><br> {{form.subject.description}} <br>
+                {{form.email.label}} <span class="required">(Required)</span> <br>{{form.email.description}} <br>{{form.email (class="form-data", id="email-regex")}}
+            </div>
+            <br>
+            <div>
+                {{form.subject.label}} <span class="required">(Required)</span><br> {{form.subject.description}} <br>
                 {{form.subject  (class="form-data")}}
             </div>
             <br>

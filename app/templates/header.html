@@ -9,6 +9,7 @@
       <li class="nav-item active">
         <a class="nav-link" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
       </li>
+      {% if current_user.is_authenticated and current_user.role=="customer"%}
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('Mailing') }}">Mailing List</a>
       </li>
@@ -16,9 +17,38 @@
     <li class="nav-item">
       <a class="nav-link" href="{{ url_for('complaint') }}">File a Complaint</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('menu') }}">Order Items</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link " href="{{ url_for('getCart') }}">Cart ({{session['Shoppingcart']|length}})</a>
+    </li>
     </ul>
+    {% endif %}
+
     <ul class="navbar-nav">
-      {% if current_user.is_authenticated %}
+      {% if current_user.is_authenticated and current_user.role=="admin"%}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('displayinventory') }}">Manage Inventory</a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('additem') }}">Add Item</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('displaysubscribers') }}">Subscribers</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('displaycomplaints') }}">Complaints</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('additem') }}">Manage Orders</a>
+          </li>
+      </ul>
+      {% endif %}
+
+    <ul class="navbar-nav">
+      {% if current_user.is_authenticated%}
           <li class="nav-item active">
             <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
           </li>
@@ -29,4 +59,4 @@
       {% endif %}
     </ul>
   </div>
-</nav>
+</nav> 

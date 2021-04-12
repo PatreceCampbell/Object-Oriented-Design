@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="tablediv" style="background-color: rgb(179, 223, 253);">
+  <table class="table" style="width: 100%;">
+    {% include 'flash_messages.html' %}
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Email</th>
+          <th></th>
+
+        </tr>
+      </thead>
+      {% for subscribers in subscribers %}
+      <tbody>
+        <tr>
+          <td>{{subscribers.first_name}}</td>
+          <td>{{subscribers.last_name}}</td>
+          <td>{{subscribers.email}}</td>
+
+          <td><a class="btn btn-primary btn-md" id='deletebutton' href="/deletesubscriber/{{subscribers.id}}" style="background-color: rgb(248, 87, 87); color: white;"> Delete Subscriber</a></td>
+  
+        </tr>
+      {% endfor %}
+    </table>
+  
+</div>
+
+  
+
+{% endblock %}

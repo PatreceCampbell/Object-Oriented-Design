@@ -1,10 +1,19 @@
 body {
     padding-top: 5rem;
+    padding-right: 20px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-align: center;
-   /* align-items: center;
-    justify-content: center; */
 }
+
+.containerdiv{
+    padding: 10px;
+}
+
+.card-layout{
+    display: grid;
+    grid-template-columns: 30% 30% 30%;
+    gap: 2%;
+}
+
 .Intro{
     padding-bottom: 10px;
     font-weight: bolder;
@@ -83,7 +92,6 @@ span{
     background-color: white;
     padding: 10px;
     border-radius: 0px 20% 2% 0px;
-    box-shadow: 0 10px 25px rgb(9, 73, 110);
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -96,7 +104,6 @@ span{
     text-align: center;
     border-radius: 2% 0px 0px 20%;
     color: white;
-    box-shadow: 0 10px 25px rgb(9, 73, 110);   
 }
 
 .LeftSide img{
@@ -175,7 +182,7 @@ button:hover{
 
 .Last img, .First img{
     height: 300px;
-    width: 300px;
+    widthu: 300px;
 }
 
 .form-data{
@@ -214,35 +221,16 @@ button:hover{
     background-color: white;
     font-weight: bold;
     padding: 10px 50px;
-    transition: transform 80ms ease-in;
-}
-
-.btn:active{
-    transform: scale(0.95);
-}
-
-.btn:focus{
-    outline: none;
 }
 
 .LoginBody{
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(255, 255, 255, 0);
+    background-color: #033d5f;
+    width: 450px;
+    height: 600px;
     text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    box-shadow: 0 10px 25px rgb(7, 0, 0);  
-    position: absolute;
-    top: 20%;
-    left: 25%;
-}
+    border-radius: 20% 2% 2% 0%;
 
-video{
-    position: fixed;
-    z-index: -1;
-    right: 0;
-    bottom: 0;
-    width: 100%;
 }
 
 .LoginBody a{
@@ -250,8 +238,10 @@ video{
 }
 
 .LoginTop{
-    background-color: rgba(3, 61, 95, 0);
+    background-color: rgb(3, 61, 95);
     padding: 20px;
+    border-radius: 0% 2% 2% 0%;
+
 }
 
 
@@ -260,21 +250,12 @@ video{
     height: 150px;
 }
 
-.LoginBottom{
-    display: flex;
-    flex-direction: row;
-    text-align: center;
-    border-radius: 20% 20% 0% 0%;
-    width: 900px;
-    background-color: rgba(255, 255, 0, 0);
-}
-
 .login-form{
     background-color: white;
     padding: 20px;
-    width: 450px;
+    height: 430px;
     text-align: center;
-    border-radius: 20% 0% 0% 0%;
+    border-radius: 20% 2% 2% 0%;
 
 }
 
@@ -283,23 +264,6 @@ video{
 }
 
 .login-form h5{
-    padding-top: 10px;
-}
-
-.login-form2{
-    background-color: white;
-    padding: 20px;
-    width: 450px;
-    text-align: center;
-    border-radius: 0% 20% 0% 0%;
-
-}
-
-.login-form2 h2{
-    padding-bottom: 10px;
-}
-
-.login-form2 h5{
     padding-top: 10px;
 }
 
@@ -319,17 +283,12 @@ video{
 
 .btn2{
     width: 400px;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(3, 61, 95);
     border: none;
-    transition: transform 80ms ease-in;
 }
 
-.btn2:active{
-    transform: scale(0.95);
-}
-
-.btn2:focus{
-    outline: none;
+.label{
+    text-align: left;
 }
 
 .SignupBody{
@@ -338,7 +297,7 @@ video{
     height: 900px;
     text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    box-shadow: 0 10px 25px rgb(9, 73, 110);  
+    /* box-shadow: 0 10px 25px rgb(9, 73, 110);   */
 }
 
 .Signup-form{
@@ -349,76 +308,27 @@ video{
     border-radius: 20% 0% 0% 2%;
 }
 
-footer{
-    position: fixed;
-    bottom: 0%;
-}
-
-.Left{
-    background-color: rgb(10, 1, 1);
-    color: rgb(255, 255, 255);
-    padding: 20px;
-    text-align: center;
-    border-radius: 0% 20% 0% 0%;
-    width: 450px;
-}
-
-.Left h2{
-    padding-top: 150px;
-
-}
-
-.Right{
-    background-color: rgb(10, 1, 1);
-    color: rgb(255, 255, 255);
-    padding: 20px;
-    text-align: center;
-    border-radius: 20% 0% 0% 0%;
-    width: 450px;
-}
-
-.Right h2{
-    padding-top: 150px;
-
-}
-
-.Inventory{
-    display: flex;
-    flex-direction: column;
-}
-
-/* .above{
-    background-color: rgb(179, 223, 253);
-} */
-
-.gallery{
-    /* background-image: url("wholesale.png"); */
-    /* background: url(wholesale.jpg) no-repeat center center fixed; */
-    background-size: cover;
-    z-index: -1; 
-    /* right: 0;
-    left: 0;
-    bottom: 0; */
-}
 
 .Picture{
-    height: 200px;
-    width: 150px;
+    height: 300px;
+    width: 380px;
     padding: 5px;
 }
 
 .cards{
     display: grid;
-    grid-template-columns: auto auto auto auto auto;
+    grid-template-columns: auto auto auto;
     grid-template-rows: auto;
     gap: 40px;
 }
 
 #card1{
-    height: 450px;
-    width: 300px;
+    height: 500px;
+    width: 400px;
     -webkit-box-shadow: inset 1px 1px 1px 0px grey; 
     box-shadow: inset 1px 1px 1px 0px grey; 
+    padding: 10px;
+    text-align: center;
 }
 
 #card2{
@@ -432,14 +342,94 @@ footer{
     background-color: rgb(179, 223, 253);
 }
 
-/* .card:nth-child(-n + 4){
-    background-color: rgb(129, 205, 255);
-} */
+#AddCart{
+    background-color: rgb(0, 183, 255);
+    color:white;
+}
 
-/* .container{
-    background-color: greenyellow;
-} */
+#deletebutton, #editbutton, #viewbutton{
+    padding: 5px 5px;
+    border-color: white;
+}
 
-footer{
-    bottom: 0%;
+tr{
+    background-color: rgb(3, 61, 95);
+    color: white;
+}
+
+#cbody{
+    text-align: center;
+    background-color: rgb(3, 61, 95);
+    color: white;
+}
+
+#checkoutbutton1{
+    background-color: rgb(255, 187, 0); 
+    color: white;
+    padding: 8px 12px;
+    border: 2px solid white;
+}
+
+#checkoutbutton2{
+    background-color: rgb(248, 87, 87); 
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border: 2px solid white;
+}
+
+#checkoutbutton3{
+    background-color: rgb(1, 196, 1); 
+    color: white;
+    padding: 8px 12px;
+    border: 2px solid black;
+}    
+
+#quantityfield{
+    width: 70px;
+}
+
+#AddItemBody{
+    border: none;
+    margin: auto;
+    padding: 10px;
+}
+
+#AddItemBody:hover{
+    background-color: white;
+}
+
+.AddItemTop{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+}
+
+#AddItemForm{
+    box-shadow: 15px 15px 5px grey;
+    background-color: rgb(1, 2, 44);
+    border-top-left-radius: 10% 50%;
+    border-bottom-left-radius: 10% 50%;
+    padding-left: 50px;
+    padding-top: 5px;
+    padding-right: 20px;
+    color: white;
+    width: 60%;
+}
+
+#AddItemForm .form-group{
+    font-weight: bolder;
+}
+
+.AddItemImageDiv{
+    margin: 10px;
+}
+
+.AddItemImage{
+    width: 650px;
+    height: 650px;
 }

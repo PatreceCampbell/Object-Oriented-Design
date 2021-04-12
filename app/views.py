@@ -12,21 +12,31 @@ from flask import render_template, request, redirect, url_for, flash, session, a
 from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
-from app.models import UserProfile, Subscriber, Complaint, Inventory
+from app.models import UserProfile, Subscriber, Complaint, Inventory,CustomerOrders
 from werkzeug.security import check_password_hash,generate_password_hash
 from werkzeug.utils import secure_filename
+from functools import wraps
 
 ###
 # Routing for your application.
 ###
-
+def requires_roles(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if current_user.role not in roles:
+                # Redirect the user to an unauthorized notice!
+                return "You are not authorized to access this page"
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
 
 
 @app.route('/')
 def home():
     """Render website's home page."""
     return render_template('home.html')
-
+@requires_roles('admin')
 @app.route('/additem', methods=["GET", "POST"])
 def additem():
     form = AddItemForm()
@@ -43,16 +53,6 @@ def additem():
             form.set_category(form.category.data)
             photo = form.photo.data
             form.set_photo(photo)
-            item_name = form.get_item
-            cost_price = form.get_cost_price
-            selling_price = form.get_selling_price
-            quantity_instock = form.get_quantity_instock
-            quantity_sold = form.get_quantity_sold
-            supplier = form.get_supplier
-            category = form.get_category
-            perishables = form.get_perishables
-
-
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
@@ -63,69 +63,255 @@ def additem():
             cur.execute(sql,(form.get_item(),form.get_cost_price(),form.get_selling_price(),form.get_quantity_instock(),form.get_quantity_sold(),form.get_supplier(),form.get_perishables(),form.get_category(),filename))
             db.commit()
     
-            flash('File Saved', 'success')
+            flash('Item Added', 'success')
             return redirect(url_for('displayinventory'))
             # return render_template('result.html',item=form.get_item(),cost_price=form.get_cost_price(),selling_price=form.get_selling_price(),quantity_instock=form.get_quantity_instock(),quantity_sold=form.get_quantity_sold(),supplier=form.get_supplier(),perishables=form.get_perishables(), photo=form.get_photo())
         else:
             flash_errors(form)    
     return render_template('addItem.html',form=form)
 
-@app.route('/updateitem', methods=["GET", "POST"])
-def updateitem():
-    updateform = UpdateItemForm()
+@app.route('/edit_item/<id>', methods=['GET','POST'])
+@requires_roles('admin')
+def edit_item(id):
+    newid=id
+    id = Inventory.query.filter_by(id=id).first()
+    form=UpdateItemForm()
 
+    if request.method=="GET":
+        form.itemname.data=id.item_name
+        form.costprice.data=id.cost_price
+        form.sellingprice.data=id.selling_price
+        form.quantityinstock.data=id.quantity_instock
+        form.quantitysold.data=id.quantity_sold
+        form.supplier.data=id.supplier
+        form.perishables.data=id.perishables
+        form.category.data=id.category
+        form.photo.data=id.photo
+
+    if request.method=="POST":
+
+        form.setitem(form.itemname.data)
+        form.setcostprice(form.costprice.data)
+        form.setsellingprice(form.sellingprice.data)
+        form.setquantityinstock(form.quantityinstock.data)
+        form.setquantitysold(form.quantitysold.data)
+        form.setsupplier(form.supplier.data)
+        form.setperishables(form.perishables.data)
+        form.setcategory(form.category.data)
+        photo = form.photo.data
+        form.setphoto(photo)
+        filename = secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
+        db=connect_db()
+        cur=db.cursor()
+        sql="UPDATE inventory SET item_name=%s,cost_price=%s,selling_price=%s,quantity_instock=%s,quantity_sold=%s,supplier=%s,perishables=%s,category=%s,photo=%s WHERE id=%s"
+        cur.execute(sql,(form.getitem(),form.getcostprice(),form.getsellingprice(),form.getquantityinstock(),form.getquantitysold(),form.getsupplier(),form.getperishables(),form.getcategory(),filename,newid))
+        db.commit()
+
+        flash('Updated','success')
+        return redirect(url_for('displayinventory'))
+    return render_template('updateItem.html',form=form, id=id)
+
+def MagerDicts(dict1,dict2):
+    if isinstance(dict1,list) and isinstance(dict2,list):
+        return dict1+dict2
+    elif isinstance(dict1,dict) and isinstance(dict2,dict):
+        return dict(list(dict1.items())+list(dict2.items()))
+    return False
+
+@app.route('/addtocart', methods=['POST', 'GET'])
+@requires_roles('customer')
+@login_required
+def addtocart():
+    try:
+        product_id=request.form.get('product_id')
+        quantity=request.form.get('quantity')
+        product=Inventory.query.filter_by(id=product_id).first()
+        if product_id and quantity and request.method=='POST':
+            DictItems={product_id:{'name': product.item_name,'price':float(product.selling_price),'quantity': quantity,'stock':product.quantity_instock ,'image':product.photo}}
+            if 'Shoppingcart' in session:
+                print(session['Shoppingcart'])
+                if product_id in session['Shoppingcart']:
+                    for key,item in session['Shoppingcart'].items():
+                        if int(key)==int(product_id):
+                            session.modified=True
+                            item['quantity'] += 1
+                        # Check over part 28 still not working
+                else:
+                    session['Shoppingcart']=MagerDicts(session['Shoppingcart'],DictItems)
+                    return redirect("menu")
+            else:
+                session['Shoppingcart']=DictItems
+                return product_id
+    except Exception as e:
+        print(e)
+    finally:
+    # pass
+        return redirect("menu")
+
+
+@app.route("/addtodb", methods=['POST', 'GET'])
+@requires_roles('customer')
+@login_required
+def addtodb():
     if request.method=='POST':
-        if form.validate_on_submit():
-            form.set_item(form.item_name.data)
-            form.set_cost_price(form.cost_price.data)
-            form.set_selling_price(form.selling_price.data)
-            form.set_quantity_instock(form.quantity_instock.data)
-            form.set_quantity_sold(form.quantity_sold.data)
-            form.set_supplier(form.supplier.data)
-            form.set_perishables(form.perishables.data)
-            form.set_category(form.category.data)
-            photo = form.photo.data
-            form.set_photo(photo)
-            item_name = form.get_item
-            cost_price = form.get_cost_price
-            selling_price = form.get_selling_price
-            quantity_instock = form.get_quantity_instock
-            quantity_sold = form.get_quantity_sold
-            supplier = form.get_supplier
-            category = form.get_category
-            perishables = form.get_perishables
+        pid=request.form.get('pid')
+        firstname=request.form.get('firstname')
+        lastname=request.form.get('lastname')
+        email=request.form.get('email')
+        quantity=request.form.get('quantity')
+        itemname=request.form.get('itemname')
+        sellingprice=request.form.get('sellingprice')
+        subtotal=request.form.get('subtotal')
+        grandsubtotal=request.form.get('grandtotal')
+        grandtotal=request.form.get('total')
+        tax=request.form.get('tax')
+
+        customer=CustomerOrders(pid=pid,first_name=firstname,last_name=lastname,email=email,quantity=quantity,item_name=itemname,cost_price=sellingprice,subtotal=subtotal,grandsubtotal=grandsubtotal,total=grandtotal,tax=tax)
+        db.session.add_all(customer)
+        db.session.commit()
+        # db=connect_db()
+        # cur=db.cursor()
+        # sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        # cur.execute(sql,(pid,firstname,lastname,email,quantity,itemname,sellingprice,subtotal,grandsubtotal,grandtotal,tax))
+        # db.commit()
+        return redirect(url_for('menu'))
+    return redirect(url_for('menu'))
 
 
-            filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+@app.route("/carts")
+@requires_roles('customer')
+@login_required
+def getCart():
+    if 'Shoppingcart' not in session:
+        return redirect("menu")
+    subtotal=0
+    grandsubtotal=0
+    grandtotal=0
+    tax=0
+    for key,product in session['Shoppingcart'].items():
+        subtotal+=float(product['price'])*int(product['quantity'])
+        tax=round((0.15 * float(subtotal)),2)
+        grandtotal=round(float(subtotal)+float(tax),2)
+        grandsubtotal=subtotal
+    return render_template('checkout.html',grandsubtotal=grandsubtotal,tax=tax,grandtotal=grandtotal)
 
-            # db=connectdb()
-            # cur=db.cursor()
-            # sql="INSERT INTO Inventory (firstname,lastname,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
-            # cur.execute(sql,(form.getfname(),form.getlname(),form.getemail(),form.getsubject(),form.getmessage()))
-            # db.commit()
-    
-            flash('File Saved', 'success')
-            return render_template('result.html',item=updateform.getitem(),costprice=updateform.getcostprice(),sellingprice=updateform.getsellingprice(),quantityinstock=updateform.getquantityinstock(),quantitysold=updateform.getquantitysold(),supplier=updateform.getsupplier(),perishables=updateform.getperishables(),category=updateform.getcategory(),photo=itemform.getphoto()) 
-    return render_template('updateItem.html',form=updateform)
+@app.route("/updatecart/<code>", methods=["POST"])
+@requires_roles('customer')
+@login_required
+def updatecart(code):
+    if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
+        return redirect('menu')
+    if request.method=='POST':
+        quantity=request.form.get('quantity')  
+        session.modifed=True
+        for key,item in session['Shoppingcart'].items():
+            if key==code:
+                item['quantity']=quantity
+                flash('Item Updated','success')
+                return redirect(url_for('getCart'))
+        return redirect(url_for('getCart'))
 
-@app.route('/displayinventory')
+
+@app.route("/deleteitemcart/<code>")
+@requires_roles('customer')
+@login_required
+def deleteitemcart(code):
+    if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
+        return redirect('menu')
+    session.modifed=True
+    for key,item in session['Shoppingcart'].items():
+        if key==code:
+            session['Shoppingcart'].pop(key,None)
+            flash('Item Removed','success')
+            return redirect(url_for('getCart'))
+    return redirect(url_for('getCart'))
+
+
+@app.route("/clearcart")
+@requires_roles('customer')
+@login_required
+def clearcart():
+    session.pop('Shoppingcart',None)
+    return redirect(url_for('getCart'))    
+
+
+@app.route('/view-inventory')
+@requires_roles('admin')
+@login_required
 def displayinventory():
-    
-    db = connect_db()
-    cur = db.cursor()
-    cur.execute("SELECT * from inventory order by id")
-    invent = cur.fetchall()
+    inventorylst = Inventory.query.order_by('id').all()
+    return render_template('view_inventory.html',inventorylst=inventorylst)
 
-    return render_template('displayinventory.html', invent=invent)
+@app.route('/view-complaints')
+@requires_roles('admin')
+@login_required
+def displaycomplaints():
+    complaint = Complaint.query.order_by('id').all()
+    return render_template('viewcomplaints.html',complaint=complaint)
 
-@app.route('/displayitem/<itemid>')
+@app.route('/deletecomplaint/<id>', methods=["GET"])
+@requires_roles('admin')
+@login_required
+def deletecom(id):
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute("DELETE FROM complaint where id=%s",[id])
+    db.commit()
+    flash('Complaint Deleted', 'success')
+    return redirect(url_for('displaycomplaints'))
+
+@app.route('/view-subscribers')
+@requires_roles('admin')
+@login_required
+def displaysubscribers():
+    subscribers = Subscriber.query.order_by('id').all()
+    return render_template('viewsubscribers.html',subscribers=subscribers)
+
+@app.route('/deletesubscriber/<id>', methods=["GET"])
+@requires_roles('admin')
+@login_required
+def deletesub(id):
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute("DELETE FROM Subscriber where id=%s",[id])
+    db.commit()
+    flash('Subscriber Deleted', 'success')
+    return redirect(url_for('displaysubscribers'))
+
+
+@app.route('/displayitem/<itemid>', methods=["POST"])
+@requires_roles('admin')
+@login_required
 def displayitem(itemid):
-    db = connect_db()
-    cur = db.cursor()
-    invent = Inventory.query.filter_by(id=itemid).all()
+    invent = Inventory.query.filter_by(id=itemid).first()
+    return render_template('individual_item.html', invent=invent)
 
-    return render_template('displayitem.html', invent=invent)
+@app.route('/menu')
+@requires_roles('customer')
+@login_required
+def menu():
+    invent = Inventory.query.all()
+    return render_template('menu.html',invent=invent)
+
+@app.route('/deleteitem/<itemid>', methods=["GET"])
+@requires_roles('admin')
+@login_required
+def deleteitem(itemid):
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute("DELETE FROM inventory where id=%s",[itemid])
+    db.commit()
+    flash('Item Deleted', 'success')
+    return redirect(url_for('displayinventory'))
+
+@app.route('/checkout')
+@requires_roles('customer')
+@login_required
+def checkout():
+    return render_template('checkout.html')
 
 def connect_db():
     return psycopg2.connect(host="localhost",database="present", user="present", password="present")
@@ -148,6 +334,7 @@ def get_image(filename):
 
 @app.route('/complaint', methods=["GET", "POST"])
 @login_required
+@requires_roles('customer')
 def complaint():
     form=ComplaintForm()
     if request.method=='POST':
@@ -163,7 +350,8 @@ def complaint():
             sql="INSERT INTO complaint (first_name,last_name,email,subject,message) VALUES (%s,%s,%s,%s,%s)"
             cur.execute(sql,(form.get_fname(),form.get_lname(),form.get_email(),form.get_subject(),form.get_message()))
             db.commit()
-    
+
+            flash("Complaint Sent!", "success")    
             return render_template('result.html',fname=form.get_fname(),lname=form.get_lname(),email=form.get_email(),subject=form.get_subject(),message=form.get_message())
     return render_template('complaint.html',form=form)
 
@@ -188,8 +376,8 @@ def Signup():
 
             db=connect_db()
             cur=db.cursor()
-            sql="INSERT INTO user_profile (first_name,last_name,username,password,email) VALUES (%s,%s,%s,%s,%s)"
-            cur.execute(sql,(fname,lname,username,generate_password_hash(password,method='pbkdf2:sha256'),email))
+            sql="INSERT INTO user_profile (first_name,last_name,username,password,email,role) VALUES (%s,%s,%s,%s,%s,%s)"
+            cur.execute(sql,(fname,lname,username,generate_password_hash(password,method='pbkdf2:sha256'),email,'customer'))
             db.commit()
 
             flash("Signup Successful!", 'success')
@@ -198,6 +386,7 @@ def Signup():
 
 @app.route('/Mailing List', methods=['GET', 'POST'])
 @login_required
+@requires_roles('customer')
 def Mailing():
     """Render the website's contact page."""
     subscriberform = SubscriberForm()
@@ -214,7 +403,7 @@ def Mailing():
             sql="INSERT INTO subscriber (first_name,last_name,email) VALUES (%s,%s,%s)"
             cur.execute(sql,(subscriberform.get_first(),subscriberform.get_last(),subscriberform.get_email()))
             db.commit()
-            flash("Message successfully sent!", 'success')
+            flash("You've been successfully added!", 'success')
             return redirect(url_for('home'))
         else:
             flash_errors(subscriberform)
@@ -241,36 +430,15 @@ def login():
             flash('Username or password is incorrect.', 'danger')   
     flash_errors(form)
     return render_template("login.html", form=form)
-
-@app.route("/adminlogin", methods=["GET", "POST"])
-def adminlogin():
-    form = AdminLoginForm()
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    if request.method == "POST" and form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-
-        user = UserProfile.query.filter_by(username=username).first()
-        if user is not None and check_password_hash(user.password,password):
-            remember_me = False
-            if 'remember_me' in request.form:
-                remember_me = True
-            login_user(user, remember=remember_me)
-            flash('Login successful!', 'success')
-            return redirect(url_for("home"))
-        else:
-            flash('Username or password is incorrect.', 'danger')   
-    flash_errors(form)
-    return render_template("adminlogin.html", form=form)
-
 ###
 # The functions below should be applicable to all Flask apps.
 ###
+
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
+    session.clear()
     flash('You have been logged out.', 'danger')
     return redirect(url_for('home'))
 
