@@ -36,6 +36,7 @@ def requires_roles(*roles):
 def home():
     """Render website's home page."""
     return render_template('home.html')
+
 @requires_roles('admin')
 @app.route('/additem', methods=["GET", "POST"])
 def additem():
@@ -102,7 +103,6 @@ def edit_item(id):
         form.setphoto(photo)
         filename = secure_filename(photo.filename)
         photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
 
         db=connect_db()
         cur=db.cursor()
@@ -312,6 +312,17 @@ def deleteitem(itemid):
 @login_required
 def checkout():
     return render_template('checkout.html')
+
+@app.route('/report')
+def report():
+
+
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute('select * from inventory')
+    records = cur.fetchall
+
+    return render_template('report.html')    
 
 def connect_db():
     return psycopg2.connect(host="localhost",database="present", user="present", password="present")

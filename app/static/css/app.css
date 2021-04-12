@@ -182,7 +182,7 @@ button:hover{
 
 .Last img, .First img{
     height: 300px;
-    widthu: 300px;
+    width: 300px;
 }
 
 .form-data{
@@ -432,4 +432,37 @@ tr{
 .AddItemImage{
     width: 650px;
     height: 650px;
+}
+
+.ReportBody{
+    margin: auto;
+    margin-top: 20px;
+}
+
+.ReportTable table{
+    margin: auto;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.ReportTable th{
+    background-color: #033d5f;
+    color: white;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+
+
+.ReportTable td{
+    background-color: #01a0fc;
+    color: white;
+    padding: 5px;
+    border-bottom: 1px solid white;
+    padding-left: 10px;
+}
+
+.ReportTable tr:nth-child(even){
+    background-color: #56c1ff;
+    color: yellow;
 }

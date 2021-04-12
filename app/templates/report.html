@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block main %}
+{% include 'flash_messages.html' %}
+<h1 style="text-align:center;">WELCOME TO INVENTORY REPORTS </h1>
+<h5 style="text-align:center;">This is were a breakdown of the inventory details are provided for the use of staff members</h5>
+<div class="ReportBody" id="ReportBody">
+    <div class="ReportTable">
+        <table>
+            <thead>
+                <th>ITEM</th>
+                <th>SELLING PRICE</th>
+                <th>COST PRICE</th>
+                <th>UNIT PROFIT</th>
+                <th>CURRENT PROFIT</th>
+                <th>EXPECTED PROFIT</th>
+                <th>QUANTITY AVAILABLE</th>
+                <th>QUANTITY SOLD</th>
+                <th>PERISHABLES</th>
+
+            </thead>
+            <tr>
+                <td>Orange Juice</td>
+                <td>$120</td>
+                <td>$100</td>
+                <td>$20</td>
+                <td>$2000</td>
+                <td>$4000</td>
+                <td>12</td>
+                <td>24</td>
+                <td>2</td>
+
+            </tr>
+            <tr>
+                <td>Coconut</td>
+                <td>$220</td>
+                <td>$280</td>
+                <td>$40</td>
+                <td>$4000</td>
+                <td>$4500</td>
+                <td>15</td>
+                <td>2</td>
+                <td>6</td>
+
+            </tr>
+            <tr>
+                <td>Mackerel</td>
+                <td>$100</td>
+                <td>$80</td>
+                <td>$20</td>
+                <td>$2000</td>
+                <td>$6000</td>
+                <td>24</td>
+                <td>29</td>
+                <td>1</td>
+
+            </tr>
+            <tr>
+                <td>Tissue</td>
+                <td>$140</td>
+                <td>$90</td>
+                <td>$50</td>
+                <td>$3000</td>
+                <td>$5000</td>
+                <td>22</td>
+                <td>20</td>
+                <td>0</td>
+
+            </tr>
+            <tr>
+                <td>White Bread</td>
+                <td>$120</td>
+                <td>$100</td>
+                <td>$20</td>
+                <td>$2000</td>
+                <td>$4000</td>
+                <td>12</td>
+                <td>24</td>
+                <td>2</td>
+
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div class="ReportSummary">
+        <h5>The total amount of stock recorded in inventory as of <span>DATE</span> are <span>TOTAL STOCK</span>.</h5>
+        <h5>The current profit of the business is <span>TOTAL PROFIT</span>.</h5>
+        <h5>The total amount og perishable goods recorded in inventory as of <span>DATE</span> are <span>TOTAL PERISHABLES</span>.</h5>
+    </div>
+    <hr>
+    <div class="MostSoldList">
+        <h5>The following items are the most sold items in inventory</h5>
+        <ul>
+            <li>Orange Juice</li>
+            <li>Mackerel</li>
+            <li>Tissue</li>
+            <li>Tuna</li>
+        </ul>
+    </div>
+     <div class="LowStockList">
+        <h5>The following items are the items that are low in stock in inventory</h5>
+        <ul>
+            <li>Orange Juice</li>
+            <li>Mackerel</li>
+            <li>Tissue</li>
+            <li>Tuna</li>
+        </ul>
+    </div>
+</div>
+    
+{% endblock %}
