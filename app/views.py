@@ -346,7 +346,7 @@ def report():
 app.route('visualize')  
 
 def connect_db():
-    return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="oodproject")
+    return psycopg2.connect(host="localhost",database="present", user="present", password="present")
 
 def get_uploaded_images():
     rootdir = os.getcwd()
