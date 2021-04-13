@@ -47,6 +47,7 @@
         <h2><a href="{{url_for('clearcart')}} " class="btn btn-danger" id="checkoutbutton3">Clear Cart</a></h2>
       </div>
       <form action="{{url_for('addtodb')}}" method="POST">
+<<<<<<< HEAD
         {% for key,product in session['Shoppingcart'].items()%}
         <input type="hidden" name="pid" value="{{current_user.id}}">
         <input type="hidden" name="firstname" value="{{current_user.first_name}}">
@@ -65,4 +66,11 @@
         {% endfor%}
         <button class="btn btn-primary"> Check Out</button>
       </form>
+=======
+        <button class="btn btn-primary"> Check Out</button>
+      </form>
+      <form action="{{url_for('get_pdf',invoice='Receipt')}}" target="_blank" method="POST">
+        <button class="btn btn-primary"> PDF</button>
+      </form>
+>>>>>>> 76c4e090ca4ab7654a7a757fc720f6623b365d97
 {% endblock %}
