@@ -475,11 +475,10 @@ tr{
 #InventoryCards{
     padding: 25px;
     text-align: center;
-    border-bottom-right-radius: 20%;
-    border-top-left-radius: 20%;
-    box-shadow: 5px 5px 3px grey;
+    border-radius: 5%;
+    box-shadow: 8px 8px 8px grey;
     font-weight: bolder;
-    border: 5px solid #033d5f;
+    border: 3px solid grey;
 }
 
 .InventoryButtons{
