@@ -1,53 +1,71 @@
 {% extends "base.html" %}
 
 {% block main %}
-<div class="AddItemBody" id="AddItemBody">
-  <!-- <div class="AddItemTop" id="AddItemTop">
-    <img src="../static/Images/logo2.png" alt="Logo">
-  </div> -->
-  <div class="AddItemBottom" id="AddItemBottom">
-    <div class="AddItemForm center-block">
-      <h2>ADD ITEMS TO INVENTORY</h2>
-      {% include 'flash_messages.html' %}
-      <form method="post" enctype="multipart/form-data" action="{{ url_for('additem') }}">
-        {{ form.csrf_token }}
-        <div class="form-group">
+<div class="card" id="AddItemBody">
+<h1 style="text-align:center;">WELCOME TO INVENTORY STOCKING</h1>
+<h5 style="text-align:center; padding-bottom:20px;">This is where staff member come to add an item to inventory.</h5>
+<div class="AddItemTop" id="AddItemTop">
+  <div class=AddItemImageDiv"">
+    <img class="AddItemImage" src="../static/Images/manage.png" alt="Logo">
+  </div>
+  <div class="card" id="AddItemForm">
+    <h2 style="text-align:center;">ADD ITEMS HERE!</h2>
+    {% include 'flash_messages.html' %}
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('additem') }}">
+      {{ form.csrf_token }}
+        <div class="form-group" style="margin-left:-10px;>
           {{ form.item_name.label }}
-          {{ form.item_name(class='form-control', placeholder="Enter item name") }}
+          {{ form.item_name(class='form-control', placeholder="Enter item name", style="width:101%;") }}
         </div>
-        <div class="form-group">
+
+        <div class="row">
+        <div class="col" style="padding-bottom:10px;">
           {{ form.cost_price.label }}
-          {{ form.cost_price(class='form-control', placeholder="Enter cost price") }}
+          {{ form.cost_price(class='form-control', placeholder="Enter cost price", style="width:100%") }}
         </div>
-        <div class="form-group">
+        <div class="col">
             {{ form.selling_price.label }}
-            {{ form.selling_price(class='form-control', placeholder="Enter selling price") }}
+            {{ form.selling_price(class='form-control', placeholder="Enter selling price", style="width:100%") }}
         </div>
-        <div class="form-group">
+        </div>
+
+        <div class="row">
+        <div class="col">
             {{ form.quantity_instock.label }}
-            {{ form.quantity_instock(class='form-control', placeholder="Enter quantity instock") }}
+            {{ form.quantity_instock(class='form-control', placeholder="Enter quantity instock", style="width:100%") }}
+        
         </div>
-        <div class="form-group">
+        <div class="col">
             {{ form.quantity_sold.label }}
-            {{ form.quantity_sold(class='form-control', placeholder="Enter quantity sold") }}
+            {{ form.quantity_sold(class='form-control', placeholder="Enter quantity sold", style="width:100%") }}
         </div>
-        <div class="form-group">
+        </div>
+
+        <div class="form-group" style="margin-left:-10px;>
             {{ form.supplier.label }}
-            {{ form.supplier(class='form-control', placeholder="Enter supplier name") }}
+            {{ form.supplier(class='form-control', placeholder="Enter supplier name", style="width:101%;") }}
         </div>
-        <div class="form-group">
+
+        <div class="row">
+        <div class="col">
             {{ form.perishables.label }}
-            {{ form.perishables(class='form-control', placeholder="Enter amount of perishables") }}
+            {{ form.perishables(class='form-control', placeholder="Enter amount of perishables", style="width:100%") }}
         </div>
-        <div class="form-group">
+        <div class="col">
           {{ form.category.label }}
-          {{ form.category(class='form-control', placeholder="Enter item category") }}
+          {{ form.category(class='form-control', placeholder="Enter item category", style="width:100%") }}
         </div>
-        <div class="form-group">
-            {{form.photo.label}}
-            {{form.photo(class="form-control")}}
-        </div>
+      </div>
+      <div class="form-group" style="margin-left:-10px;">
+          {{form.photo.label}}
+          {{form.photo(class="form-control", style="width:101%;")}}
+      </div>
+      <div style="text-align:center;">
         <button type="submit" name="submit" class="btn3 btn-primary">Add Item</button>
-      </form>
-    </div>
+      </div>
+    </form>
+  </div>
+    
+</div>  
+</div>
 {% endblock %}

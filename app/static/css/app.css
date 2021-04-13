@@ -3,6 +3,11 @@ body {
     padding-right: 20px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+.containerdiv{
+    padding: 10px;
+}
+
 .card-layout{
     display: grid;
     grid-template-columns: 30% 30% 30%;
@@ -177,7 +182,7 @@ button:hover{
 
 .Last img, .First img{
     height: 300px;
-    widthu: 300px;
+    width: 300px;
 }
 
 .form-data{
@@ -382,4 +387,82 @@ tr{
 
 #quantityfield{
     width: 70px;
+}
+
+#AddItemBody{
+    border: none;
+    margin: auto;
+    padding: 10px;
+}
+
+#AddItemBody:hover{
+    background-color: white;
+}
+
+.AddItemTop{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+}
+
+#AddItemForm{
+    box-shadow: 15px 15px 5px grey;
+    background-color: rgb(1, 2, 44);
+    border-top-left-radius: 10% 50%;
+    border-bottom-left-radius: 10% 50%;
+    padding-left: 50px;
+    padding-top: 5px;
+    padding-right: 20px;
+    color: white;
+    width: 60%;
+}
+
+#AddItemForm .form-group{
+    font-weight: bolder;
+}
+
+.AddItemImageDiv{
+    margin: 10px;
+}
+
+.AddItemImage{
+    width: 650px;
+    height: 650px;
+}
+
+.ReportBody{
+    margin: auto;
+    margin-top: 20px;
+}
+
+.ReportTable table{
+    margin: auto;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.ReportTable th{
+    background-color: #033d5f;
+    color: white;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+
+
+.ReportTable td{
+    background-color: #01a0fc;
+    color: white;
+    padding: 5px;
+    border-bottom: 1px solid white;
+    padding-left: 10px;
+}
+
+.ReportTable tr:nth-child(even){
+    background-color: #56c1ff;
+    color: yellow;
 }

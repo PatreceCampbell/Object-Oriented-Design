@@ -8,7 +8,7 @@ import psycopg2
 import os
 from wtforms.fields.simple import PasswordField
 from app import app, db, login_manager, models
-from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
+from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory,make_response
 from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
@@ -16,6 +16,8 @@ from app.models import UserProfile, Subscriber, Complaint, Inventory,CustomerOrd
 from werkzeug.security import check_password_hash,generate_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
+import pdfkit
+from flask import Markup
 
 ###
 # Routing for your application.
@@ -36,6 +38,7 @@ def requires_roles(*roles):
 def home():
     """Render website's home page."""
     return render_template('home.html')
+
 @requires_roles('admin')
 @app.route('/additem', methods=["GET", "POST"])
 def additem():
@@ -103,7 +106,6 @@ def edit_item(id):
         filename = secure_filename(photo.filename)
         photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-
         db=connect_db()
         cur=db.cursor()
         sql="UPDATE inventory SET item_name=%s,cost_price=%s,selling_price=%s,quantity_instock=%s,quantity_sold=%s,supplier=%s,perishables=%s,category=%s,photo=%s WHERE id=%s"
@@ -157,28 +159,49 @@ def addtocart():
 @login_required
 def addtodb():
     if request.method=='POST':
-        pid=request.form.get('pid')
-        firstname=request.form.get('firstname')
-        lastname=request.form.get('lastname')
-        email=request.form.get('email')
-        quantity=request.form.get('quantity')
-        itemname=request.form.get('itemname')
-        sellingprice=request.form.get('sellingprice')
-        subtotal=request.form.get('subtotal')
-        grandsubtotal=request.form.get('grandtotal')
-        grandtotal=request.form.get('total')
-        tax=request.form.get('tax')
+        subtotal1=0
+        lst2,lst3,lst4=[],[],[]
+        for key,items in session['Shoppingcart'].items():
+            subtotal1+=float(items['price'])*int(items['quantity'])
+            tax=round((0.15 * float(subtotal1)),2)
+            grandtotal=round(float(subtotal1)+float(tax),2)
+            grandsubtotal=subtotal1
+            lst2.append(tax)
+            lst3.append(grandtotal)
+            lst4.append(grandsubtotal)
 
-        customer=CustomerOrders(pid=pid,first_name=firstname,last_name=lastname,email=email,quantity=quantity,item_name=itemname,cost_price=sellingprice,subtotal=subtotal,grandsubtotal=grandsubtotal,total=grandtotal,tax=tax)
-        db.session.add_all(customer)
-        db.session.commit()
-        # db=connect_db()
-        # cur=db.cursor()
-        # sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cur.execute(sql,(pid,firstname,lastname,email,quantity,itemname,sellingprice,subtotal,grandsubtotal,grandtotal,tax))
-        # db.commit()
+        for key,items in session['Shoppingcart'].items():
+            itemname=items['name']
+            sellingprice=items['price']
+            quantity=items['quantity']
+            subtotal=float(quantity)*float(sellingprice)
+            subtotal1+=float(items['price'])*int(items['quantity'])
+            db=connect_db()
+            cur=db.cursor()
+            sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1]))
+            db.commit()
+        flash('Order Submitted','success')
         return redirect(url_for('menu'))
     return redirect(url_for('menu'))
+
+@app.route("/get_pdf/<invoice>", methods=['POST','GET'])
+@requires_roles('customer')
+@login_required
+def get_pdf(invoice):
+    if request.method=='POST':
+    
+        for key,items in session['Shoppingcart'].items():
+            itemname=items['name']
+            sellingprice=items['price']
+            quantity=items['quantity']
+        rendered= render_template('pdf.html',invoice=invoice,itemname=itemname,sellingprice=sellingprice,quantity=quantity)
+        pdf=pdfkit.from_string(rendered,False)
+        response=make_response(pdf)
+        response.headers['content-Type']='application/pdf'
+        response.headers['content-Dispostion']='inline; filename=invoice.pdf'
+        return response
+    return render_template('pdf.html')
 
 
 @app.route("/carts")
@@ -312,6 +335,14 @@ def deleteitem(itemid):
 @login_required
 def checkout():
     return render_template('checkout.html')
+
+@app.route('/report')
+@requires_roles('admin')
+@login_required
+def report():
+    inventory = Inventory.query.order_by('id').all()
+    return render_template('report.html',inventory=inventory)  
+app.route('visualize')  
 
 def connect_db():
     return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="oodproject")

@@ -47,22 +47,9 @@
         <h2><a href="{{url_for('clearcart')}} " class="btn btn-danger" id="checkoutbutton3">Clear Cart</a></h2>
       </div>
       <form action="{{url_for('addtodb')}}" method="POST">
-        {% for key,product in session['Shoppingcart'].items()%}
-        <input type="hidden" name="pid" value="{{current_user.id}}">
-        <input type="hidden" name="firstname" value="{{current_user.first_name}}">
-        <input type="hidden" name="lastname" value="{{current_user.last_name}}">
-        <input type="hidden" name="email" value="{{current_user.email}}">
-        <input type="hidden" name="quantity" value="{{product.quantity}}">
-        <input type="hidden" name="itemname" value="{{product.name}}">
-        <input type="hidden" name="sellingprice" value="{{product.price}}">
-        {%if product.quantity|int > 0%}
-        {%set subtotal=product.quantity|int * product.price|float%}
-        {% endif%}
-        <input type="hidden" name="subtotal" value="{{subtotal}}">
-        <input type="hidden" name="grandtotal" value="{{grandsubtotal}}">
-        <input type="hidden" name="total" value="{{grandtotal}}">
-        <input type="hidden" name="tax" value="{{tax}}">
-        {% endfor%}
         <button class="btn btn-primary"> Check Out</button>
+      </form>
+      <form action="{{url_for('get_pdf',invoice='Receipt')}}" target="_blank" method="POST">
+        <button class="btn btn-primary"> PDF</button>
       </form>
 {% endblock %}

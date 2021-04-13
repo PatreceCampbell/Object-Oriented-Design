@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block main %}
+{% include 'flash_messages.html' %}
+<h1 style="text-align:center;">WELCOME TO INVENTORY REPORTS </h1>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.0/chart.min.js" integrity="sha512-RGbSeD/jDcZBWNsI1VCvdjcDULuSfWTtIva2ek5FtteXeSjLfXac4kqkDRHVGf1TwsXCAqPTF7/EYITD0/CTqw==" crossorigin="anonymous"></script>    {% block js %} {% endblock%}
+
+<div class="container">
+    <canvas id="myChart"></canvas>
+</div>
+<script>
+
+    let myChart=document.getElementById('myChart').getContext('2d');
+    //Chart.defaults.defaultFontColor = "red";
+    //Chart.defaults.global.defaultFontr="#000";
+    //Chart.defaults.global.defaultFontStyle="'Bold'";
+    Chart.defaults.font.style = 'italic';
+    Chart.defaults.font.size = 16;
+   // Chart.defaults.font.style = 'bold';
+   //Chart.defaults.defaultFontColor = "#fff";
+
+
+    let massPopChart= new Chart(myChart,{
+        type:'pie',
+        data:{
+            labels:['Boston','Denver','Good','Bad','Springfield','Ghee'],
+            datasets:[{
+                label:'Population',
+                data:[234344,12121,314343,343342,44343,34344],
+                //backgroundColor:'green'
+                backgroundColor:['orange','red','green','purple','blue','yellow'],
+                borderWidth:1,
+                borderColor:'grey',
+                hoverBorderWidth:3,
+                hoverBorderColor:'black'
+            }]
+            
+        },
+        options:{
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Largest Cities',
+                    padding: {
+                        top: 10,
+                        bottom: 20
+                    },font:{
+                        size:20
+                    }
+                },
+                legend:{
+                    display:true,
+                    position:'right'
+                }
+            }
+        }
+    });
+</script>
+
+
+
+<table class="table" style="width: 100%;">
+    {% include 'flash_messages.html' %}
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col" style="padding-right: 5px;">Item Id</th>
+          <th scope="col">Item Name</th>
+          <th scope="col">Quantity Sold</th>
+          <th scope="col">Cost Price</th>
+          <th scope="col">ID</th>
+          <th scope="col">Profit</th>
+        </tr>
+      </thead>
+      {% set totalprofit = namespace(value=0) %}
+      {% for inventory in inventory %}
+      <tbody>
+        <tr>
+            <td></td>
+          <td>{{inventory.item_name}}</td>
+          <td>{{inventory.quantity_sold}} units @ ${{inventory.selling_price}} each</td>
+          <td>$ {{inventory.cost_price}}</td>
+          <td>{{inventory.id}}</td>
+          {%set profit=inventory.quantity_sold|float * (inventory.selling_price|float-inventory.cost_price|float)%}
+          <td>$ {{profit}}</td>
+        </tr>
+            {%set totalprofit.value=totalprofit.value+profit%}
+      {% endfor %}
+      <tr>
+        <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>Total Profit</td>
+      <td>${{totalprofit.value}}</td>
+    </tr>
+</table>
+
+{% endblock %}
