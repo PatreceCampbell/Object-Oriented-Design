@@ -305,7 +305,7 @@ def deletesub(id):
     return redirect(url_for('displaysubscribers'))
 
 
-@app.route('/displayitem/<itemid>', methods=["POST"])
+@app.route('/displayitem/<itemid>')
 @requires_roles('admin')
 @login_required
 def displayitem(itemid):
@@ -341,11 +341,12 @@ def checkout():
 @login_required
 def report():
     inventory = Inventory.query.order_by('id').all()
-    return render_template('report.html',inventory=inventory)  
+    return render_template('report.html',inventory=inventory)
+    
 app.route('visualize')  
 
 def connect_db():
-    return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="oodproject")
+    return psycopg2.connect(host="localhost",database="present", user="present", password="present")
 
 def get_uploaded_images():
     rootdir = os.getcwd()

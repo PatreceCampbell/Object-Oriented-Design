@@ -452,8 +452,6 @@ tr{
     padding-left: 10px;
 }
 
-
-
 .ReportTable td{
     background-color: #01a0fc;
     color: white;
@@ -465,4 +463,28 @@ tr{
 .ReportTable tr:nth-child(even){
     background-color: #56c1ff;
     color: yellow;
+}
+
+.InventoryBody{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-template-rows: auto;
+    row-gap: 40px;
+}
+
+#InventoryCards{
+    padding: 25px;
+    text-align: center;
+    border-radius: 5%;
+    box-shadow: 8px 8px 8px grey;
+    font-weight: bolder;
+    border: 3px solid grey;
+}
+
+.InventoryButtons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }

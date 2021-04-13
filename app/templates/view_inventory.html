@@ -1,47 +1,39 @@
 {% extends 'base.html' %}
 
 {% block main %}
-<div class="tablediv" style="margin-left:-150px; background-color: rgb(179, 223, 253);">
-  <table class="table" style="width: 100%;">
-    {% include 'flash_messages.html' %}
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col" style="padding-right: 5px;">Item Id</th>
-          <th scope="col">Item Name</th>
-          <th scope="col">Cost Price</th>
-          <th scope="col">Selling Price</th>
-          <th scope="col">Quantity Sold</th>
-          <th scope="col">Quantity Instock</th>
-          <th scope="col">Perishables</th>
-          <th scope="col">Supplier</th>
-          <th scope="col">Category</th>
-          <th scope="col"></th>
-          <th scope="col">Action</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      {% for inventorylst in inventorylst %}
-      <tbody>
-        <tr>
-          <td>{{inventorylst.id}}</td>
-          <td>{{inventorylst.item_name}}</td>
-          <td>{{"$" + inventorylst.cost_price|string}}</td>
-          <td>{{"$" + inventorylst.selling_price|string}}</td>
-          <td>{{inventorylst.quantity_instock}}</td>
-          <td>{{inventorylst.quantity_sold}}</td>
-          <td>{{inventorylst.perishables}}</td>
-          <td>{{inventorylst.supplier}}</td>
-          <td>{{inventorylst.category}}</td>
-          <form action="{{url_for('displayitem', itemid = inventorylst.id)}}" method="POST">
-            <td><input type="submit" class="btn btn-primary btn-md" id="viewbutton" value="View Item" style="background-color: rgb(0, 183, 255); color: white;"></td>
-          </form>
-            <td ><a class="btn btn-primary btn-md" id='editbutton' href="/edit_item/{{inventorylst.id}}" style="background-color: rgb(255, 187, 0); color: white;"> Update Item</a></td>
+<h1 style="text-align:center; color: #033d5f;">WELCOME TO MAMA B'S INVENTORY MANAGEMENT<h1>
+<h4 style="text-align:center; padding-bottom:20px; color: #033d5f;">This is where staff members come to manage items within the inventory</h4>
+<div class="InventoryBody">
+  {% for inventorylst in inventorylst %}
+  <div class="card" id="InventoryCards" style="width:450px; height:570px;">
+    <div class="image" id="image">
+            <img class="Picture" id="Picture" src="{{ url_for('get_image', filename=inventorylst.photo)}}"/>
+    </div>
+    <div class="InventoryCardBottom">
+    
+      <h2 style="text-align:center; color: #033d5f;">{{inventorylst.item_name}}</h2>
+      <h5>S_Price: {{"$" + inventorylst.selling_price|string}}</h5>
+      <h5>Q_Instock {{inventorylst.quantity_instock}}</h5>
+      <h5>Supplier: {{inventorylst.supplier}}</h5>
+      <h5>Category: {{inventorylst.category}}</h5>
 
-          <td><a class="btn btn-primary btn-md" id='deletebutton' href="/deleteitem/{{inventorylst.id}}" style="background-color: rgb(248, 87, 87); color: white;"> Delete Item</a></td>
-  
-        </tr>
-      {% endfor %}
-    </table>
+      <div class="InventoryButtons">
+        <div>
+          <a class="btn btn-md" id='viewbutton' href="/displayitem/{{inventorylst.id}}" style="background-color: rgb(0, 183, 255); color: white; width:120px;">View Item</a>
+        </div>
+        <div>
+          <a class="btn btn-md" id='editbutton' href="/edit_item/{{inventorylst.id}}" style="background-color: rgb(255, 187, 0); color: white; width:120px;"> Update Item</a>
+        </div>
+        <div>
+          <a class="btn btn-md" id='deletebutton' href="/deleteitem/{{inventorylst.id}}" style="background-color: rgb(248, 87, 87); color: white; width:120px;"> Delete Item</a>
+        </div>
+      </div>
+    </div>  
+
+  </div>
+  {%endfor%}
+  </div>
+    
   
 </div>
 
