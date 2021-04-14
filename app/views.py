@@ -9,7 +9,7 @@ import os
 from wtforms.fields.simple import PasswordField
 from app import app, db, login_manager, models
 from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory,make_response
-from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm
+from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm, SearchForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
 from app.models import UserProfile, Subscriber, Complaint, Inventory,CustomerOrders
@@ -312,12 +312,27 @@ def displayitem(itemid):
     invent = Inventory.query.filter_by(id=itemid).first()
     return render_template('individual_item.html', invent=invent)
 
-@app.route('/menu')
+@app.route('/menu', methods=['POST','GET'])
 @requires_roles('customer')
 @login_required
 def menu():
-    invent = Inventory.query.all()
-    return render_template('menu.html',invent=invent)
+    form = SearchForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        search = form.search.data
+
+        db=connect_db()
+        cur=db.cursor()
+        cur.execute('SELECT * FROM Inventory WHERE item_name like %s', ('%' + search + '%',))        
+        invent = cur.fetchall()
+
+        return render_template('menu.html', invent=invent, form=form)
+    else:
+        db=connect_db()
+        cur=db.cursor()
+        cur.execute('SELECT * FROM Inventory')        
+        invent = cur.fetchall()
+        return render_template('menu.html',invent=invent, form=form)
 
 @app.route('/deleteitem/<itemid>', methods=["GET"])
 @requires_roles('admin')
