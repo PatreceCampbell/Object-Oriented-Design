@@ -18,6 +18,7 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 import pdfkit
 from flask import Markup
+import datetime
 
 ###
 # Routing for your application.
@@ -176,10 +177,11 @@ def addtodb():
             quantity=items['quantity']
             subtotal=float(quantity)*float(sellingprice)
             subtotal1+=float(items['price'])*int(items['quantity'])
+            datenow=datetime.datetime.now()
             db=connect_db()
             cur=db.cursor()
-            sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1]))
+            sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1],datenow))
             db.commit()
         flash('Order Submitted','success')
         return redirect(url_for('menu'))
