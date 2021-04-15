@@ -42,16 +42,17 @@
   
       </table>
       <div class="d-flex p-5">
-        <h2><a href="{{url_for('menu')}}">Continue Shopping</a></h2>
-        <h2>Tax: ${{tax}}</h2>
-        <h2>Grand Subtotal: ${{grandsubtotal}}</h2>
-        <h2>Grand Total: ${{grandtotal}}</h2>
-        <h2><a href="{{url_for('clearcart')}} " class="btn btn-danger" id="checkoutbutton3">Clear Cart</a></h2>
+        <h2><a href="{{url_for('menu')}}" style="margin-right:20px;">Continue Shopping</a></h2>
+        <h2 style="margin-right:20px">Tax: <span style="color: #033d5f;"> ${{tax}}</span></h2>
+        <h2 style="margin-right:20px">Grand Subtotal: <span style="color: #033d5f;"> ${{grandsubtotal}}</span></h2>
+        <h2>Grand Total: <span style="color: #033d5f;"> ${{grandtotal}} </span> </h2>
+        <h2><a href="{{url_for('clearcart')}} " class="btn btn-danger" id="clearcartbutton">Clear Cart</a></h2>
+        <form action="{{url_for('addtodb')}}" method="POST" style="margin-right: 20px;">
+        <button class="btn btn-primary" style="background-color: rgb(255, 187, 0); border: solid rgb(255, 187, 0);"> Check Out</button>
+        </form>
+        <form action="{{url_for('get_pdf',invoice='Receipt')}}" target="_blank" method="POST">
+          <button class="btn btn-primary" style="padding: 8px 12px;"> INVOICE (PDF)</button>
+        </form>
       </div>
-      <form action="{{url_for('addtodb')}}" method="POST">
-        <button class="btn btn-primary"> Check Out</button>
-      </form>
-      <form action="{{url_for('get_pdf',invoice='Receipt')}}" target="_blank" method="POST">
-        <button class="btn btn-primary"> PDF</button>
-      </form>
+      
 {% endblock %}
