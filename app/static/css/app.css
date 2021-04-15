@@ -8,10 +8,19 @@ body {
     padding: 10px;
 }
 
+.FooterClass{
+    padding: 10px;
+    width: 100%;
+    margin-top: 80px;
+}
+
 .card-layout{
     display: grid;
-    grid-template-columns: 30% 30% 30%;
-    gap: 2%;
+    grid-template-columns: auto auto auto;
+    grid-template-rows: auto;
+    gap: 50px;
+    justify-content: center;
+    align-content: center;
 }
 
 .Intro{
@@ -78,9 +87,10 @@ span{
 
 .MainBody{
     display: grid;
-    grid-template-columns: 50% 50%;
-    padding: 50px;
-    margin: 50px;
+    grid-template-columns: 40% 40%;
+    margin-left: 15%;
+    text-align: center;
+    padding: 5%;
     padding-top: 50px;
     padding-bottom: 50px; 
     border-radius: 5%;
@@ -137,6 +147,10 @@ button:hover{
 .ComplaintArea{
     display: flex;
     flex-direction: row;  
+    justify-content: center;
+    align-content: center;
+    width: 50%;
+    margin: auto;
 }
 
 .First{
@@ -212,15 +226,6 @@ button:hover{
 
 .required{
     color: rgb(247, 82, 82);
-}
-
-#CartButton{
-    border-radius: 20px;
-    border: 3px solid rgb(0, 153, 255);
-    color:  rgb(0, 153, 255);
-    background-color: white;
-    font-weight: bold;
-    padding: 10px 50px;
 }
 
 .LoginBody{
@@ -383,7 +388,13 @@ tr{
     color: white;
     padding: 8px 12px;
     border: 2px solid black;
-}    
+}   
+
+#clearcartbutton{
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 10px 15px;
+}
 
 #quantityfield{
     width: 70px;
@@ -504,7 +515,28 @@ tr{
     padding-bottom: 30px;
 }
 
-.MenuForm button{
-    margin-left: 20px;
-    
+#MenuCard{
+    border-radius: 20px;
+    border: 3px 3px solid grey;
+    box-shadow: 5px 5px 2px grey;
 }
+
+.MenuForm button{
+    margin-left: 20px; 
+}
+
+#MenuQuantity{
+    width: 50px;
+    margin: 2px;
+}
+
+#CartButton{
+    border-radius: 20px;
+    border: 3px solid rgb(0, 153, 255);
+    color:  rgb(0, 153, 255);
+    background-color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    margin-top: 10px;
+}
+

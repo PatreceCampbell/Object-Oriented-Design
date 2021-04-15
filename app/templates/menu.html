@@ -18,7 +18,7 @@
 </form>
 <div class="card-layout">
     {% for item in invent %}
-    <div class="card" style="width: 20rem;">
+    <div class="card" id="MenuCard" style="width: 20rem; padding:5px;">
         <div class="h-100 w-100">
             <img class="card-img-top h-100 w-100" src="/uploads/{{item[9]}}" alt="Card image cap">
         </div>
@@ -30,7 +30,7 @@
             <form action="{{url_for('addtocart')}}" method="POST">
               <input type="hidden" name="product_id" value="{{item[0]}}">
               <label for="">Quantity:</label>
-              <input type="number" name="quantity" id="" value="1" min="1" max="{{item[4]}}">
+              <input type="number" name="quantity" id="MenuQuantity" value="1" min="1" max="{{item[4]}}">
               <button type="submit" class="btn btn-primary" id="CartButton"> Add to Cart</button>
             </form>
           </div>
