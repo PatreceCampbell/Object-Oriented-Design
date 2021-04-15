@@ -2,56 +2,35 @@
 
 {% block main %}
 
-<!-- {{orders}} -->
-
 <table class="table" style="width: 100%;">
     {% include 'flash_messages.html' %}
     <thead class="thead-dark">
     <tr>
-        <th scope="col" style="padding-right: 5px;">Item Id</th>
+        <th scope="col" style="padding-right: 5px;">Order Number</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
         <th scope="col">Item Name</th>
-        <th scope="col">Quantity Sold</th>
-        <th scope="col">Quantity Instock</th>
-        <th scope="col">Perishables</th>
-        <th scope="col">Cost Price</th>
-        <th scope="col">Unit Profit</th>
-        <th scope="col">Expected Profit</th>
-        <th scope="col">Current Profit</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Subtotal</th>
+        <th scope="col">Tax</th>
+        <th scope="col">Total</th>
+        <th scope="col">Order Date</th>
     </tr>
     </thead>
-    {% set totalprofit = namespace(value=0) %}
-    {% for inventory in inventory %}
+    {% for orders in orders %}
     <tbody>
     <tr>
-        <td>{{inventory.id}}</td>
-        <td>{{inventory.item_name}}</td>
-        <td>{{inventory.quantity_sold}} units @ ${{inventory.selling_price}} each</td>
-        <td>{{inventory.quantity_instock}} units</td>
-        <td>{{inventory.perishables}}</td>
-        <td>$ {{inventory.cost_price}}</td>
-
-        {%set unit_profit=(inventory.selling_price|float-inventory.cost_price|float)%}
-        <td>$ {{unit_profit}}</td>
-
-        {%set expected_profit=(inventory.quantity_sold|float + inventory.quantity_instock|float - inventory.perishables|float) * (inventory.selling_price|float-inventory.cost_price|float)%}
-        <td>$ {{expected_profit}}</td>
-
-        {%set profit=inventory.quantity_sold|float * (inventory.selling_price|float-inventory.cost_price|float)%}
-        <td>$ {{profit}}</td>
+        <td>{{orders.order_id}}</td>
+        <td>{{orders.first_name}} {{orders.last_name}}</td>
+        <td>{{orders.email}}</td>
+        <td>{{orders.item_name}}</td>
+        <td>{{orders.quantity}}</td>
+        <td>{{orders.grandsubtotal}}</td>
+        <td>{{orders.tax}}</td>
+        <td>{{orders.total}}</td>
+        <td>{{orders.ord_date}}</td>
     </tr>
-    {%set totalprofit.value=totalprofit.value+profit%}
     {% endfor %}
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Total Profit</td>
-        <td>${{totalprofit.value}}</td>
-    </tr>
 </table>
 
 {% endblock %}

@@ -162,6 +162,8 @@ def addtodb():
     if request.method=='POST':
         subtotal1=0
         lst2,lst3,lst4=[],[],[]
+        datenow=datetime.datetime.now()
+
         for key,items in session['Shoppingcart'].items():
             subtotal1+=float(items['price'])*int(items['quantity'])
             tax=round((0.15 * float(subtotal1)),2)
@@ -171,17 +173,27 @@ def addtodb():
             lst3.append(grandtotal)
             lst4.append(grandsubtotal)
 
+            db=connect_db()
+            cur=db.cursor()
+            cur.execute('SELECT MAX(order_id) FROM customer_orders')        
+            maxid = cur.fetchone()
+            maxidd=0
+            if maxid[0]==None:
+                maxidd=1
+            else:
+                maxidd=maxid[0]+1
+
         for key,items in session['Shoppingcart'].items():
             itemname=items['name']
             sellingprice=items['price']
             quantity=items['quantity']
             subtotal=float(quantity)*float(sellingprice)
             subtotal1+=float(items['price'])*int(items['quantity'])
-            datenow=datetime.datetime.now()
+
             db=connect_db()
             cur=db.cursor()
-            sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1],datenow))
+            sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date,order_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1],datenow,maxidd))
             db.commit()
         flash('Order Submitted','success')
         return redirect(url_for('menu'))
@@ -372,11 +384,12 @@ def manage():
     cur=db.cursor()
     cur.execute('SELECT * FROM customer_orders')
     orders=cur.fetchall()
+
     return render_template('manageord.html',orders=orders)
     
 
 def connect_db():
-    return psycopg2.connect(host="localhost",database="present", user="present", password="present")
+    return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="oodproject")
 
 def get_uploaded_images():
     rootdir = os.getcwd()
