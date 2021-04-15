@@ -108,7 +108,7 @@ class CustomerOrders(db.Model):
     grandsubtotal = db.Column(db.Numeric(1000,2))
     total = db.Column(db.Numeric(1000,2))
     tax = db.Column(db.Numeric(1000,2))
-    # ord_date=db.Column(db.DateTime,  default=db.func.current_timestamp())
+    # ord_date=db.Column(DateTime, default=datetime.datetime.utcnow)
 
 
 
