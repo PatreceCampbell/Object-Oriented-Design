@@ -274,3 +274,5 @@ class SearchForm(FlaskForm):
         
     def getsearch(self):
         return self.search 
+
+        

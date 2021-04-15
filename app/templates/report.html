@@ -19,32 +19,42 @@
     Chart.defaults.font.size = 16;
    // Chart.defaults.font.style = 'bold';
    //Chart.defaults.defaultFontColor = "#fff";
+    var labelarr=[]
+    var dataarr=[]
+    for (let i of {{values|tojson}}){
+        labelarr.push(i[0])
+        dataarr.push(i[1])
+    }
 
-
+    var color = [];
+    for (var i = 0; i < dataarr.length; i++) {
+        let c= `rgb(${[1,2,3].map(x=>Math.random()*256|0)})`
+        color.push(c)
+    }
+    
     let massPopChart= new Chart(myChart,{
         type:'pie',
         data:{
-            labels:['Boston','Denver','Good','Bad','Springfield','Ghee'],
+
+            labels:labelarr,
             datasets:[{
                 label:'Population',
-                data:[234344,12121,314343,343342,44343,34344],
-                //backgroundColor:'green'
-                backgroundColor:['orange','red','green','purple','blue','yellow'],
+                data:dataarr,
+                backgroundColor:color,
+                //backgroundColor:['orange','red','green','purple','blue','yellow','pink','brown','gold','aqua','turquiose','teal','orchid'],
                 borderWidth:1,
                 borderColor:'grey',
                 hoverBorderWidth:3,
                 hoverBorderColor:'black'
-            }]
-            
+            }]    
         },
         options:{
             plugins: {
                 title: {
                     display: true,
-                    text: 'Largest Cities',
+                    text: 'Percentage of Goods Sold',
                     padding: {
-                        top: 10,
-                        bottom: 20
+                        top: 10
                     },font:{
                         size:20
                     }
@@ -56,9 +66,8 @@
             }
         }
     });
+
 </script>
-
-
 
 <table class="table" style="width: 100%;">
     {% include 'flash_messages.html' %}

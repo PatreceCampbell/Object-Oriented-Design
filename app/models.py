@@ -97,6 +97,7 @@ class Inventory(db.Model):
 class CustomerOrders(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pid=db.Column(db.Integer)
+    orderid=db.Column(db.Integer)
     first_name = db.Column(db.String(1000))
     last_name = db.Column(db.String(1000))
     email = db.Column(db.String(1000))
@@ -107,6 +108,7 @@ class CustomerOrders(db.Model):
     grandsubtotal = db.Column(db.Numeric(1000,2))
     total = db.Column(db.Numeric(1000,2))
     tax = db.Column(db.Numeric(1000,2))
+    # ord_date=db.Column(db.DateTime,  default=db.func.current_timestamp())
 
 
 

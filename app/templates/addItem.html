@@ -10,7 +10,7 @@
   </div>
   <div class="card" id="AddItemForm">
     <h2 style="text-align:center;">ADD ITEMS HERE!</h2>
-    {% include 'flash_messages.html' %}
+
     <form method="post" enctype="multipart/form-data" action="{{ url_for('additem') }}">
       {{ form.csrf_token }}
         <div class="form-group" style="margin-left:-10px;>

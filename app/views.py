@@ -355,13 +355,26 @@ def checkout():
 @requires_roles('admin')
 @login_required
 def report():
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute('SELECT item_name,quantity_sold/quantity_instock::float*100 FROM inventory')
+    values = cur.fetchall()
     inventory = Inventory.query.order_by('id').all()
-    return render_template('report.html',inventory=inventory)
+    return render_template('report.html',inventory=inventory,values=values)
     
-app.route('visualize')  
+@app.route('/manage')
+@requires_roles('admin')
+@login_required
+def manage():
+    db=connect_db()
+    cur=db.cursor()
+    cur.execute('SELECT * FROM customer_orders')
+    orders=cur.fetchall()
+    return render_template('manageord.html',orders=orders)
+    
 
 def connect_db():
-    return psycopg2.connect(host="localhost",database="present", user="present", password="present")
+    return psycopg2.connect(host="localhost",database="oodproject", user="oodproject", password="oodproject")
 
 def get_uploaded_images():
     rootdir = os.getcwd()
