@@ -266,4 +266,11 @@ class UpdateItemForm(FlaskForm):
     def getphoto(self):
         return self.photo 
 
+class SearchForm(FlaskForm):
+    search = StringField('Search', description="Please enter meal you wish to search for.")
 
+    def setsearch(self,search):
+            self.search = search 
+        
+    def getsearch(self):
+        return self.search 

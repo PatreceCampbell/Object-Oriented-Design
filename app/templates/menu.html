@@ -3,27 +3,35 @@
 {% block main %}
 {% include 'flash_messages.html' %}
 
-    <h1 style="text-align:center; color: #033d5f;">WELCOME TO MAMA B'S WHOLESALE </h1>
+<h1 style="text-align:center; color: #033d5f;">WELCOME TO MAMA B'S WHOLESALE </h1>
 <h4 style="text-align:center; padding-bottom:20px; color: #033d5f;">Here you can browse for items we currently have available</h4>
-    <div class="above" id="above">
+<form class="MenuForm" action="{{url_for('menu')}}" method="POST">
+    {{ form.csrf_token }}
+ 
+    <div>
+        {{form.search(class="SearchField", placeholder="Search or jump to...")}}
     </div>
-    <br>
+    
+    <div class="MenuButtonDiv">
+        <button type="submit" name="submit" class="btn btn-primary btn-md">SEARCH</button>
+    </div>
+</form>
 <div class="card-layout">
     {% for item in invent %}
     <div class="card" style="width: 20rem;">
         <div class="h-100 w-100">
-            <img class="card-img-top h-100 w-100" src="/uploads/{{item.photo}}" alt="Card image cap">
+            <img class="card-img-top h-100 w-100" src="/uploads/{{item[9]}}" alt="Card image cap">
         </div>
         <div class="card-body">
-          <h5 class="card-title text-center">{{item.item_name}}</h5>
-          <h5 class="card-title text-center"style="color:black;">{{"Price: " + "$" + item.selling_price|string}}</h5>
-          <h5 class="card-title text-center"style="color:black;">{{"Manufactured By: " + item.supplier|string}}</h5>
+          <h5 class="card-title text-center">{{item[1]}}</h5>
+          <h5 class="card-title text-center"style="color:black;">{{"Price: " + "$" + item[3]|string}}</h5>
+          <h5 class="card-title text-center"style="color:black;">{{"Manufactured By: " + item[6]|string}}</h5>
           <div class="card-footer bg-transparent border-success text-center">
             <form action="{{url_for('addtocart')}}" method="POST">
-              <input type="hidden" name="product_id" value="{{item.id}}">
+              <input type="hidden" name="product_id" value="{{item[0]}}">
               <label for="">Quantity:</label>
-              <input type="number" name="quantity" id="" value="1" min="1" max="{{item.quantity_instock}}">
-              <button type="submit" class="btn btn-primary"> Add to Cart</button>
+              <input type="number" name="quantity" id="" value="1" min="1" max="{{item[4]}}">
+              <button type="submit" class="btn btn-primary" id="CartButton"> Add to Cart</button>
             </form>
           </div>
         </div>
