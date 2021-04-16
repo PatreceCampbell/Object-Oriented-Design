@@ -2,141 +2,202 @@
 
 {% block main %}
 {% include 'flash_messages.html' %}
-<h1 style="text-align:center; color: #033d5f;">WELCOME TO INVENTORY REPORTS </h1>
-<h4 style="text-align:center; padding-bottom:20px; color: #033d5f;">This is where staff members come to view reports on the business's inventory</h4>
+<h1 style="text-align:center; color: white;">WELCOME TO INVENTORY REPORTS </h1>
+<h4 style="text-align:center; padding-bottom:20px; color: white;">This is where staff members come to view reports on the business's inventory</h4>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.0/chart.min.js" integrity="sha512-RGbSeD/jDcZBWNsI1VCvdjcDULuSfWTtIva2ek5FtteXeSjLfXac4kqkDRHVGf1TwsXCAqPTF7/EYITD0/CTqw==" crossorigin="anonymous"></script>    {% block js %} {% endblock%}
+<div class="">
+    <h2>Inventory KPIs</h2>
+    <div style="display: flex;">
 
-<div class="container">
-    <canvas id="myChart"></canvas>
-</div>
-<script>
+        <div class="card" style="width: 12rem;">
+            {% set totalvalue = namespace(value=0) %}
+            {% for inventory in inventory %}
+            {%set currentval=inventory.quantity_instock|float * inventory.selling_price|float%}
+            {%set totalvalue.value=totalvalue.value+currentval%}
+            {% endfor %}
+            <div class="card-body">
+                <p class="card-text">Current Stock Value</p>
+              <h5 class="card-title">$ {{totalvalue.value}}</h5>
+            </div>
+        </div>
 
-    let myChart=document.getElementById('myChart').getContext('2d');
-    //Chart.defaults.defaultFontColor = "red";
-    //Chart.defaults.global.defaultFontr="#000";
-    //Chart.defaults.global.defaultFontStyle="'Bold'";
-    Chart.defaults.font.style = 'italic';
-    Chart.defaults.font.size = 16;
-   // Chart.defaults.font.style = 'bold';
-   //Chart.defaults.defaultFontColor = "#fff";
-    var labelarr=[]
-    var dataarr=[]
-    for (let i of {{values|tojson}}){
-        labelarr.push(i[0])
-        dataarr.push(i[1])
-    }
+        <div class="card" style="width: 12rem;">
+            {% set count = namespace(value=0) %}
+            {% for inventory in inventory %}
+            {%if inventory.quantity_instock < 20%}
+                {%set count.value=count.value+1%}
+            {%endif%}
+            {%endfor%}   
+            <div class="card-body">
+                <p class="card-text">Products to Reorder</p>
+              <h5 class="card-title">{{count.value}}</h5>
+            </div>
+        </div>
 
-    var color = [];
-    for (var i = 0; i < dataarr.length; i++) {
-        let c= `rgb(${[1,2,3].map(x=>Math.random()*256|0)})`
-        color.push(c)
-    }
+        <div class="card" style="width: 12rem;">  
+            <div class="card-body">
+                <p class="card-text">Item/s Low Instock</p>
+                {% for inventory in inventory %}
+                    {%if inventory.quantity_instock < 20%}
+                    <h5 class="card-title">{{inventory.item_name}}</h5>    
+                    {%endif%}
+                {%endfor%}  
+            </div>
+        </div>
+
+        <div class="card" style="width: 12rem;">  
+            <div class="card-body">
+                <p class="card-text">Most Popular Item</p>
+                <h5 class="card-title">{{maxitem[0]}}</h5>    
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <table class="table" style="width: 100%;">
+        {% include 'flash_messages.html' %}
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col" style="padding-right: 5px;">Item Id</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Quantity Sold</th>
+            <th scope="col">Quantity Instock</th>
+            <th scope="col">Perishables</th>
+            <th scope="col">Cost Price</th>
+            <th scope="col">Unit Profit</th>
+            <th scope="col">Expected Profit</th>
+            <th scope="col">Current Profit</th>
+        </tr>
+        </thead>
+        {% set totalprofit = namespace(value=0) %}
+        {% for inventory in inventory %}
+        <tbody>
+        <tr>
+            <td>{{inventory.id}}</td>
+            <td>{{inventory.item_name}}</td>
+            <td>{{inventory.quantity_sold}} units @ ${{inventory.selling_price}} each</td>
+            <td>{{inventory.quantity_instock}} units</td>
+            <td>{{inventory.perishables}}</td>
+            <td>$ {{inventory.cost_price}}</td>
     
-    let massPopChart= new Chart(myChart,{
-        type:'pie',
-        data:{
+            {%set unit_profit=(inventory.selling_price|float-inventory.cost_price|float)%}
+            <td>$ {{unit_profit}}</td>
+    
+            {%set expected_profit=(inventory.quantity_sold|float + inventory.quantity_instock|float - inventory.perishables|float) * (inventory.selling_price|float-inventory.cost_price|float)%}
+            <td>$ {{expected_profit}}</td>
+    
+            {%set profit=inventory.quantity_sold|float * (inventory.selling_price|float-inventory.cost_price|float)%}
+            <td>$ {{profit}}</td>
+        </tr>
+        {%set totalprofit.value=totalprofit.value+profit%}
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Total Profit</td>
+            <td>${{totalprofit.value}}</td>
+        </tr>
+    </table>
+    <div>
+        <h5>Items Low Instock</h5>
+        {% for inventory in inventory %}
+            {%if inventory.quantity_instock < 12%}
+            <ul>
+                <li>{{inventory.item_name}}</li>
+            </ul>
+            {%endif%}
+        {%endfor%}    
+    </div>
 
-            labels:labelarr,
-            datasets:[{
-                label:'Population',
-                data:dataarr,
-                backgroundColor:color,
-                //backgroundColor:['orange','red','green','purple','blue','yellow','pink','brown','gold','aqua','turquiose','teal','orchid'],
-                borderWidth:1,
-                borderColor:'grey',
-                hoverBorderWidth:3,
-                hoverBorderColor:'black'
-            }]    
-        },
-        options:{
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Percentage of Goods Sold',
-                    padding: {
-                        top: 10
-                    },font:{
-                        size:20
+    <div class="container">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+    
+        let myChart=document.getElementById('myChart').getContext('2d');
+        //Chart.defaults.defaultFontColor = "red";
+        //Chart.defaults.global.defaultFontr="#000";
+        //Chart.defaults.global.defaultFontStyle="'Bold'";
+        Chart.defaults.font.style = 'italic';
+        Chart.defaults.font.size = 16;
+       // Chart.defaults.font.style = 'bold';
+       //Chart.defaults.defaultFontColor = "#fff";
+        var labelarr=[]
+        var dataarr=[]
+        for (let i of {{values|tojson}}){
+            labelarr.push(i[0])
+            dataarr.push(i[1])
+        }
+    
+        var color = [];
+        for (var i = 0; i < dataarr.length; i++) {
+            let c= `rgb(${[1,2,3].map(x=>Math.random()*256|0)})`
+            color.push(c)
+        }
+        
+        let massPopChart= new Chart(myChart,{
+            type:'pie',
+            data:{
+    
+                labels:labelarr,
+                datasets:[{
+                    label:'Population',
+                    data:dataarr,
+                    backgroundColor:color,
+                    //backgroundColor:['orange','red','green','purple','blue','yellow','pink','brown','gold','aqua','turquiose','teal','orchid'],
+                    borderWidth:1,
+                    borderColor:'grey',
+                    hoverBorderWidth:3,
+                    hoverBorderColor:'black'
+                }]    
+            },
+            options:{
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Percentage of Goods Sold',
+                        padding: {
+                            top: 10
+                        },font:{
+                            size:20
+                        }
+                    },
+                    legend:{
+                        display:true,
+                        position:'right'
                     }
-                },
-                legend:{
-                    display:true,
-                    position:'right'
                 }
             }
-        }
-    });
+        });
+    
+    </script>
+    
 
-</script>
 
-<table class="table" style="width: 100%;">
-    {% include 'flash_messages.html' %}
-    <thead class="thead-dark">
-    <tr>
-        <th scope="col" style="padding-right: 5px;">Item Id</th>
-        <th scope="col">Item Name</th>
-        <th scope="col">Quantity Sold</th>
-        <th scope="col">Quantity Instock</th>
-        <th scope="col">Perishables</th>
-        <th scope="col">Cost Price</th>
-        <th scope="col">Unit Profit</th>
-        <th scope="col">Expected Profit</th>
-        <th scope="col">Current Profit</th>
-    </tr>
-    </thead>
-    {% set totalprofit = namespace(value=0) %}
-    {% for inventory in inventory %}
-    <tbody>
-    <tr>
-        <td>{{inventory.id}}</td>
-        <td>{{inventory.item_name}}</td>
-        <td>{{inventory.quantity_sold}} units @ ${{inventory.selling_price}} each</td>
-        <td>{{inventory.quantity_instock}} units</td>
-        <td>{{inventory.perishables}}</td>
-        <td>$ {{inventory.cost_price}}</td>
 
-        {%set unit_profit=(inventory.selling_price|float-inventory.cost_price|float)%}
-        <td>$ {{unit_profit}}</td>
 
-        {%set expected_profit=(inventory.quantity_sold|float + inventory.quantity_instock|float - inventory.perishables|float) * (inventory.selling_price|float-inventory.cost_price|float)%}
-        <td>$ {{expected_profit}}</td>
 
-        {%set profit=inventory.quantity_sold|float * (inventory.selling_price|float-inventory.cost_price|float)%}
-        <td>$ {{profit}}</td>
-    </tr>
-    {%set totalprofit.value=totalprofit.value+profit%}
-    {% endfor %}
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Total Profit</td>
-        <td>${{totalprofit.value}}</td>
-    </tr>
-</table>
-<div>
-    <h5>Items Low Instock</h5>
-    {% for inventory in inventory %}
-        {%if inventory.quantity_instock < 12%}
-        <ul>
-            <li>{{inventory.item_name}}</li>
-        </ul>
-        {%endif%}
-    {%endfor%}    
-</div>
-<div>
-    <h5>Most Popular Items</h5>
-    {% for inventory in inventory %}
-        {%if inventory.quantity_sold > 24%}
-        <ul>
-            <li>{{inventory.item_name}}</li>
-        </ul>
-        {%endif%}
-    {%endfor%}    
+
+    <div>
+        <h5>Most Popular Items</h5>
+        {% for inventory in inventory %}
+            {%if inventory.quantity_sold > 24%}
+            <ul>
+                <li>{{inventory.item_name}}</li>
+            </ul>
+            {%endif%}
+        {%endfor%}    
+    </div>
+    
+
 </div>
 
 {% endblock %}

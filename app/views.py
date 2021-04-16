@@ -7,11 +7,11 @@ This file creates your application.
 import psycopg2
 import os
 from wtforms.fields.simple import PasswordField
-from app import app, db, login_manager, models
+from app import app, login_manager,models,db
 from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory,make_response
 from .forms import AddItemForm, UpdateItemForm, SubscriberForm, ComplaintForm, SignupForm, AdminLoginForm, SearchForm
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm
+from app.forms  import LoginForm
 from app.models import UserProfile, Subscriber, Complaint, Inventory,CustomerOrders
 from werkzeug.security import check_password_hash,generate_password_hash
 from werkzeug.utils import secure_filename
@@ -34,88 +34,288 @@ def requires_roles(*roles):
         return wrapped
     return wrapper
 
+class InvenManagement:
+    
+    @requires_roles('admin')
+    @app.route('/additem', methods=["GET", "POST"])
+    def additem():
+        form = AddItemForm()
+
+        if request.method=='POST':
+            if form.validate_on_submit():
+                form.set_item(form.item_name.data)
+                form.set_cost_price(form.cost_price.data)
+                form.set_selling_price(form.selling_price.data)
+                form.set_quantity_instock(form.quantity_instock.data)
+                form.set_quantity_sold(form.quantity_sold.data)
+                form.set_supplier(form.supplier.data)
+                form.set_perishables(form.perishables.data)
+                form.set_category(form.category.data)
+                photo = form.photo.data
+                form.set_photo(photo)
+                filename = secure_filename(photo.filename)
+                photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
+                db=connect_db()
+                cur=db.cursor()
+                sql="INSERT INTO inventory (item_name,cost_price,selling_price,quantity_instock,quantity_sold,supplier,perishables,category,photo) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cur.execute(sql,(form.get_item(),form.get_cost_price(),form.get_selling_price(),form.get_quantity_instock(),form.get_quantity_sold(),form.get_supplier(),form.get_perishables(),form.get_category(),filename))
+                db.commit()
+        
+                flash('Item Added', 'success')
+                return redirect(url_for('displayinventory'))
+                # return render_template('result.html',item=form.get_item(),cost_price=form.get_cost_price(),selling_price=form.get_selling_price(),quantity_instock=form.get_quantity_instock(),quantity_sold=form.get_quantity_sold(),supplier=form.get_supplier(),perishables=form.get_perishables(), photo=form.get_photo())
+            else:
+                flash_errors(form)    
+        return render_template('addItem.html',form=form)
+
+    @app.route('/view-inventory')
+    @requires_roles('admin')
+    @login_required
+    def displayinventory():
+        inventorylst = Inventory.query.order_by('id').all()
+        return render_template('view_inventory.html',inventorylst=inventorylst)
+
+    @app.route('/displayitem/<itemid>')
+    @requires_roles('admin')
+    @login_required
+    def displayitem(itemid):
+        invent = Inventory.query.filter_by(id=itemid).first()
+        return render_template('individual_item.html', invent=invent)
+
+    @app.route('/deleteitem/<itemid>', methods=["GET"])
+    @requires_roles('admin')
+    @login_required
+    def deleteitem(itemid):
+        db=connect_db()
+        cur=db.cursor()
+        cur.execute("DELETE FROM inventory where id=%s",[itemid])
+        db.commit()
+        flash('Item Deleted', 'success')
+        return redirect(url_for('displayinventory'))
+
+    @app.route('/edit_item/<id>', methods=['GET','POST'])
+    @requires_roles('admin')
+    def edit_item(id):
+        newid=id
+        id = Inventory.query.filter_by(id=id).first()
+        form=UpdateItemForm()
+
+        if request.method=="GET":
+            form.itemname.data=id.item_name
+            form.costprice.data=id.cost_price
+            form.sellingprice.data=id.selling_price
+            form.quantityinstock.data=id.quantity_instock
+            form.quantitysold.data=id.quantity_sold
+            form.supplier.data=id.supplier
+            form.perishables.data=id.perishables
+            form.category.data=id.category
+            form.photo.data=id.photo
+
+        if request.method=="POST":
+
+            form.setitem(form.itemname.data)
+            form.setcostprice(form.costprice.data)
+            form.setsellingprice(form.sellingprice.data)
+            form.setquantityinstock(form.quantityinstock.data)
+            form.setquantitysold(form.quantitysold.data)
+            form.setsupplier(form.supplier.data)
+            form.setperishables(form.perishables.data)
+            form.setcategory(form.category.data)
+            photo = form.photo.data
+            form.setphoto(photo)
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            db=connect_db()
+            cur=db.cursor()
+            sql="UPDATE inventory SET item_name=%s,cost_price=%s,selling_price=%s,quantity_instock=%s,quantity_sold=%s,supplier=%s,perishables=%s,category=%s,photo=%s WHERE id=%s"
+            cur.execute(sql,(form.getitem(),form.getcostprice(),form.getsellingprice(),form.getquantityinstock(),form.getquantitysold(),form.getsupplier(),form.getperishables(),form.getcategory(),filename,newid))
+            db.commit()
+
+            flash('Updated','success')
+            return redirect(url_for('displayinventory'))
+        return render_template('updateItem.html',form=form, id=id)
+
+class Report:
+    @app.route('/report')
+    @requires_roles('admin')
+    @login_required
+    def report():
+        db=connect_db()
+        cur=db.cursor()
+        cur.execute('SELECT item_name,quantity_sold/quantity_instock::float*100 FROM inventory')
+        values = cur.fetchall()
+        inventory = Inventory.query.order_by('id').all()
+        db=connect_db()
+        cur=db.cursor()
+        cur.execute('Select item_name from Inventory where quantity_sold=(Select Max(quantity_sold) from Inventory);')
+        maxitem = cur.fetchone()
+
+        return render_template('report.html',inventory=inventory,values=values,maxitem=maxitem)
+
+    @app.route("/get_pdf/<invoice>", methods=['POST','GET'])
+    @requires_roles('customer')
+    @login_required
+    def get_pdf(invoice):
+        if request.method=="POST":
+            db=connect_db()
+            cur=db.cursor()
+            cur.execute("SELECT order_id,array_to_string(array_agg(DISTINCT CONCAT(first_name, ' ', last_name)), ', '), array_to_string(array_agg( CONCAT(item_name)), ', '),array_to_string(array_agg( CONCAT(quantity)), ', '),array_to_string(array_agg( CONCAT(selling_price)), ', '),array_to_string(array_agg( DISTINCT CONCAT(grandsubtotal)), ', '), array_to_string(array_agg( DISTINCT CONCAT(tax)), ', '),array_to_string(array_agg( DISTINCT CONCAT(total)), ', '),array_to_string(array_agg( DISTINCT CONCAT(ord_date)), ', ') as persondata FROM customer_orders WHERE pid=%s GROUP BY order_id;", [current_user.id])        
+            orders = cur.fetchall()
+
+            rendered= render_template('pdf.html',orders=orders)
+            pdf=pdfkit.from_string(rendered,False)
+            response=make_response(pdf)
+            response.headers['content-Type']='application/pdf'
+            response.headers['content-Dispostion']='inline; filename=invoice.pdf' 
+            return response
+        return render_template('pdf.html')
+
+
+class OrderManagement:
+    @app.route("/updatecart/<code>", methods=["POST"])
+    @requires_roles('customer')
+    @login_required
+    def updatecart(code):
+        if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
+            return redirect('menu')
+        if request.method=='POST':
+            quantity=request.form.get('quantity')  
+            session.modifed=True
+            for key,item in session['Shoppingcart'].items():
+                if key==code:
+                    item['quantity']=quantity
+                    flash('Item Updated','success')
+                    return redirect(url_for('getCart'))
+            return redirect(url_for('getCart'))
+
+    @app.route("/deleteitemcart/<code>")
+    @requires_roles('customer')
+    @login_required
+    def deleteitemcart(code):
+        if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
+            return redirect('menu')
+        session.modifed=True
+        for key,item in session['Shoppingcart'].items():
+            if key==code:
+                session['Shoppingcart'].pop(key,None)
+                flash('Item Removed','success')
+                return redirect(url_for('getCart'))
+        return redirect(url_for('getCart'))
+
+
+    @app.route("/clearcart")
+    @requires_roles('customer')
+    @login_required
+    def clearcart():
+        session.pop('Shoppingcart',None)
+        return redirect(url_for('getCart'))    
+
+
+    @app.route('/menu', methods=['POST','GET'])
+    @requires_roles('customer')
+    @login_required
+    def menu():
+        form = SearchForm()
+
+        if request.method == 'POST' and form.validate_on_submit():
+            search = form.search.data
+            filterfield = form.filterfield.data
+
+            if filterfield == 'None':
+                db=connect_db()
+                cur=db.cursor()
+                cur.execute('SELECT * FROM Inventory WHERE item_name like %s', ('%' + search + '%',))        
+                invent = cur.fetchall()
+                return render_template('menu.html', invent=invent, form=form)
+
+            if filterfield != 'None' and search != '':
+                db=connect_db()
+                cur=db.cursor()
+                cur.execute('SELECT * FROM Inventory WHERE item_name like %s and category = %s', ('%' + search + '%', filterfield,))        
+                invent = cur.fetchall()
+                return render_template('menu.html', invent=invent, form=form)
+
+            else:    
+                db=connect_db()
+                cur=db.cursor()
+                cur.execute('SELECT * FROM Inventory WHERE category = %s', (filterfield,))        
+                invent = cur.fetchall()
+                return render_template('menu.html', invent=invent, form=form)
+        else:
+            db=connect_db()
+            cur=db.cursor()
+            cur.execute('SELECT * FROM Inventory')        
+            invent = cur.fetchall()
+            return render_template('menu.html',invent=invent, form=form)
+
+    @app.route('/checkout')
+    @requires_roles('customer')
+    @login_required
+    def checkout():
+        return render_template('checkout.html')
+
+  
+    @app.route("/carts")
+    @requires_roles('customer')
+    @login_required
+    def getCart():
+        if 'Shoppingcart' not in session:
+            return redirect("menu")
+        subtotal=0
+        grandsubtotal=0
+        grandtotal=0
+        tax=0
+        for key,product in session['Shoppingcart'].items():
+            subtotal+=float(product['price'])*int(product['quantity'])
+            tax=round((0.15 * float(subtotal)),2)
+            grandtotal=round(float(subtotal)+float(tax),2)
+            grandsubtotal=subtotal
+        return render_template('checkout.html',grandsubtotal=grandsubtotal,tax=tax,grandtotal=grandtotal)
+
+
+    @app.route('/addtocart', methods=['POST', 'GET'])
+    @requires_roles('customer')
+    @login_required
+    def addtocart():
+        try:
+            product_id=request.form.get('product_id')
+            quantity=request.form.get('quantity')
+            product=Inventory.query.filter_by(id=product_id).first()
+            if product_id and quantity and request.method=='POST':
+                DictItems={product_id:{'name': product.item_name,'price':float(product.selling_price),'quantity': quantity,'stock':product.quantity_instock ,'image':product.photo}}
+                if 'Shoppingcart' in session:
+                    print(session['Shoppingcart'])
+                    if product_id in session['Shoppingcart']:
+                        for key,item in session['Shoppingcart'].items():
+                            if int(key)==int(product_id):
+                                session.modified=True
+                                item['quantity'] += 1
+                            # Check over part 28 still not working
+                    else:
+                        session['Shoppingcart']=MagerDicts(session['Shoppingcart'],DictItems)
+                        return redirect("menu")
+                else:
+                    session['Shoppingcart']=DictItems
+                    return product_id
+        except Exception as e:
+            print(e)
+        finally:
+        # pass
+            return redirect("menu")
+
+
+
+
 
 @app.route('/')
 def home():
     """Render website's home page."""
     return render_template('home.html')
 
-@requires_roles('admin')
-@app.route('/additem', methods=["GET", "POST"])
-def additem():
-    form = AddItemForm()
 
-    if request.method=='POST':
-        if form.validate_on_submit():
-            form.set_item(form.item_name.data)
-            form.set_cost_price(form.cost_price.data)
-            form.set_selling_price(form.selling_price.data)
-            form.set_quantity_instock(form.quantity_instock.data)
-            form.set_quantity_sold(form.quantity_sold.data)
-            form.set_supplier(form.supplier.data)
-            form.set_perishables(form.perishables.data)
-            form.set_category(form.category.data)
-            photo = form.photo.data
-            form.set_photo(photo)
-            filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-
-            db=connect_db()
-            cur=db.cursor()
-            sql="INSERT INTO inventory (item_name,cost_price,selling_price,quantity_instock,quantity_sold,supplier,perishables,category,photo) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql,(form.get_item(),form.get_cost_price(),form.get_selling_price(),form.get_quantity_instock(),form.get_quantity_sold(),form.get_supplier(),form.get_perishables(),form.get_category(),filename))
-            db.commit()
-    
-            flash('Item Added', 'success')
-            return redirect(url_for('displayinventory'))
-            # return render_template('result.html',item=form.get_item(),cost_price=form.get_cost_price(),selling_price=form.get_selling_price(),quantity_instock=form.get_quantity_instock(),quantity_sold=form.get_quantity_sold(),supplier=form.get_supplier(),perishables=form.get_perishables(), photo=form.get_photo())
-        else:
-            flash_errors(form)    
-    return render_template('addItem.html',form=form)
-
-@app.route('/edit_item/<id>', methods=['GET','POST'])
-@requires_roles('admin')
-def edit_item(id):
-    newid=id
-    id = Inventory.query.filter_by(id=id).first()
-    form=UpdateItemForm()
-
-    if request.method=="GET":
-        form.itemname.data=id.item_name
-        form.costprice.data=id.cost_price
-        form.sellingprice.data=id.selling_price
-        form.quantityinstock.data=id.quantity_instock
-        form.quantitysold.data=id.quantity_sold
-        form.supplier.data=id.supplier
-        form.perishables.data=id.perishables
-        form.category.data=id.category
-        form.photo.data=id.photo
-
-    if request.method=="POST":
-
-        form.setitem(form.itemname.data)
-        form.setcostprice(form.costprice.data)
-        form.setsellingprice(form.sellingprice.data)
-        form.setquantityinstock(form.quantityinstock.data)
-        form.setquantitysold(form.quantitysold.data)
-        form.setsupplier(form.supplier.data)
-        form.setperishables(form.perishables.data)
-        form.setcategory(form.category.data)
-        photo = form.photo.data
-        form.setphoto(photo)
-        filename = secure_filename(photo.filename)
-        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-        db=connect_db()
-        cur=db.cursor()
-        sql="UPDATE inventory SET item_name=%s,cost_price=%s,selling_price=%s,quantity_instock=%s,quantity_sold=%s,supplier=%s,perishables=%s,category=%s,photo=%s WHERE id=%s"
-        cur.execute(sql,(form.getitem(),form.getcostprice(),form.getsellingprice(),form.getquantityinstock(),form.getquantitysold(),form.getsupplier(),form.getperishables(),form.getcategory(),filename,newid))
-        db.commit()
-
-        flash('Updated','success')
-        return redirect(url_for('displayinventory'))
-    return render_template('updateItem.html',form=form, id=id)
 
 def MagerDicts(dict1,dict2):
     if isinstance(dict1,list) and isinstance(dict2,list):
@@ -123,36 +323,6 @@ def MagerDicts(dict1,dict2):
     elif isinstance(dict1,dict) and isinstance(dict2,dict):
         return dict(list(dict1.items())+list(dict2.items()))
     return False
-
-@app.route('/addtocart', methods=['POST', 'GET'])
-@requires_roles('customer')
-@login_required
-def addtocart():
-    try:
-        product_id=request.form.get('product_id')
-        quantity=request.form.get('quantity')
-        product=Inventory.query.filter_by(id=product_id).first()
-        if product_id and quantity and request.method=='POST':
-            DictItems={product_id:{'name': product.item_name,'price':float(product.selling_price),'quantity': quantity,'stock':product.quantity_instock ,'image':product.photo}}
-            if 'Shoppingcart' in session:
-                print(session['Shoppingcart'])
-                if product_id in session['Shoppingcart']:
-                    for key,item in session['Shoppingcart'].items():
-                        if int(key)==int(product_id):
-                            session.modified=True
-                            item['quantity'] += 1
-                        # Check over part 28 still not working
-                else:
-                    session['Shoppingcart']=MagerDicts(session['Shoppingcart'],DictItems)
-                    return redirect("menu")
-            else:
-                session['Shoppingcart']=DictItems
-                return product_id
-    except Exception as e:
-        print(e)
-    finally:
-    # pass
-        return redirect("menu")
 
 
 @app.route("/addtodb", methods=['POST', 'GET'])
@@ -183,19 +353,19 @@ def addtodb():
             else:
                 maxidd=maxid[0]+1
 
-        # for key,items in session['Shoppingcart'].items():
-        #     itemname=items['name']
-        #     sellingprice=items['price']
-        #     quantity=items['quantity']
-        #     # subtotal=float(quantity)*float(sellingprice)
-        #     # tax=round((0.15 * float(subtotal)),2)
-        #     subtotal1+=float(items['price'])*int(items['quantity'])
+        for key,items in session['Shoppingcart'].items():
+            itemname=items['name']
+            sellingprice=items['price']
+            quantity=items['quantity']
+            subtotal=float(quantity)*float(sellingprice)
+            # tax=round((0.15 * float(subtotal)),2)
+            subtotal1+=float(items['price'])*int(items['quantity'])
 
-        #     db=connect_db()
-        #     cur=db.cursor()
-        #     sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date,order_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        #     cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1],datenow,maxidd))
-        #     db.commit()
+            db=connect_db()
+            cur=db.cursor()
+            sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date,order_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1],datenow,maxidd))
+            db.commit()
 
             #SUBTRACTION
             # db=connect_db()
@@ -203,95 +373,11 @@ def addtodb():
             # sql="UPDATE Inventory SET quantity_instock=quantity_instock-%s WHERE item_name=%s"
             # cur.execute(sql,(quantity,itemname))
             # db.commit()
-        v
-        flash(Markup('Successfully registered, please click <a href="{{url_for("get_pdf(Reciept)")}}" target="#" class="alert-link">here</a>'))
-
+        
+        # flash(Markup('Successfully registered, please click <a href="/get_pdf/Reciept" target="#" class="alert-link">here</a>'))
         flash('Order Submitted','success')
         return redirect(url_for('menu'))
     return redirect(url_for('menu'))
-
-@app.route("/get_pdf/<invoice>", methods=['POST','GET'])
-@requires_roles('customer')
-@login_required
-def get_pdf(invoice):
-    filepath='/uploads'
-    if request.method=='POST':
-        for key,items in session['Shoppingcart'].items():
-            itemname=items['name']
-            sellingprice=items['price']
-            quantity=items['quantity']
-        rendered= render_template('pdf.html',invoice=invoice,itemname=itemname,sellingprice=sellingprice,quantity=quantity)
-        pdf=pdfkit.from_string(rendered,False)
-        response=make_response(pdf)
-        response.headers['content-Type']='application/pdf'
-        response.headers['content-Dispostion']='inline; filename=invoice.pdf' 
-        return response
-    return render_template('pdf.html')
-
-
-@app.route("/carts")
-@requires_roles('customer')
-@login_required
-def getCart():
-    if 'Shoppingcart' not in session:
-        return redirect("menu")
-    subtotal=0
-    grandsubtotal=0
-    grandtotal=0
-    tax=0
-    for key,product in session['Shoppingcart'].items():
-        subtotal+=float(product['price'])*int(product['quantity'])
-        tax=round((0.15 * float(subtotal)),2)
-        grandtotal=round(float(subtotal)+float(tax),2)
-        grandsubtotal=subtotal
-    return render_template('checkout.html',grandsubtotal=grandsubtotal,tax=tax,grandtotal=grandtotal)
-
-@app.route("/updatecart/<code>", methods=["POST"])
-@requires_roles('customer')
-@login_required
-def updatecart(code):
-    if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
-        return redirect('menu')
-    if request.method=='POST':
-        quantity=request.form.get('quantity')  
-        session.modifed=True
-        for key,item in session['Shoppingcart'].items():
-            if key==code:
-                item['quantity']=quantity
-                flash('Item Updated','success')
-                return redirect(url_for('getCart'))
-        return redirect(url_for('getCart'))
-
-
-@app.route("/deleteitemcart/<code>")
-@requires_roles('customer')
-@login_required
-def deleteitemcart(code):
-    if 'Shoppingcart' not in session and len(session['Shoppingcart'])<=0:
-        return redirect('menu')
-    session.modifed=True
-    for key,item in session['Shoppingcart'].items():
-        if key==code:
-            session['Shoppingcart'].pop(key,None)
-            flash('Item Removed','success')
-            return redirect(url_for('getCart'))
-    return redirect(url_for('getCart'))
-
-
-@app.route("/clearcart")
-@requires_roles('customer')
-@login_required
-def clearcart():
-    session.pop('Shoppingcart',None)
-    return redirect(url_for('getCart'))    
-
-
-@app.route('/view-inventory')
-@requires_roles('admin')
-@login_required
-def displayinventory():
-    inventorylst = Inventory.query.order_by('id').all()
-    return render_template('view_inventory.html',inventorylst=inventorylst)
 
 @app.route('/view-complaints')
 @requires_roles('admin')
@@ -330,78 +416,8 @@ def deletesub(id):
     return redirect(url_for('displaysubscribers'))
 
 
-@app.route('/displayitem/<itemid>')
-@requires_roles('admin')
-@login_required
-def displayitem(itemid):
-    invent = Inventory.query.filter_by(id=itemid).first()
-    return render_template('individual_item.html', invent=invent)
 
-@app.route('/menu', methods=['POST','GET'])
-@requires_roles('customer')
-@login_required
-def menu():
-    form = SearchForm()
 
-    if request.method == 'POST' and form.validate_on_submit():
-        search = form.search.data
-        filterfield = form.filterfield.data
-
-        if filterfield == 'None':
-            db=connect_db()
-            cur=db.cursor()
-            cur.execute('SELECT * FROM Inventory WHERE item_name like %s', ('%' + search + '%',))        
-            invent = cur.fetchall()
-            return render_template('menu.html', invent=invent, form=form)
-
-        if filterfield != 'None' and search != '':
-            db=connect_db()
-            cur=db.cursor()
-            cur.execute('SELECT * FROM Inventory WHERE item_name like %s and category = %s', ('%' + search + '%', filterfield,))        
-            invent = cur.fetchall()
-            return render_template('menu.html', invent=invent, form=form)
-
-        else:    
-            db=connect_db()
-            cur=db.cursor()
-            cur.execute('SELECT * FROM Inventory WHERE category = %s', (filterfield,))        
-            invent = cur.fetchall()
-            return render_template('menu.html', invent=invent, form=form)
-    else:
-        db=connect_db()
-        cur=db.cursor()
-        cur.execute('SELECT * FROM Inventory')        
-        invent = cur.fetchall()
-        return render_template('menu.html',invent=invent, form=form)
-
-@app.route('/deleteitem/<itemid>', methods=["GET"])
-@requires_roles('admin')
-@login_required
-def deleteitem(itemid):
-    db=connect_db()
-    cur=db.cursor()
-    cur.execute("DELETE FROM inventory where id=%s",[itemid])
-    db.commit()
-    flash('Item Deleted', 'success')
-    return redirect(url_for('displayinventory'))
-
-@app.route('/checkout')
-@requires_roles('customer')
-@login_required
-def checkout():
-    return render_template('checkout.html')
-
-@app.route('/report')
-@requires_roles('admin')
-@login_required
-def report():
-    db=connect_db()
-    cur=db.cursor()
-    cur.execute('SELECT item_name,quantity_sold/quantity_instock::float*100 FROM inventory')
-    values = cur.fetchall()
-    inventory = Inventory.query.order_by('id').all()
-    return render_template('report.html',inventory=inventory,values=values)
-    
 @app.route('/manage')
 @requires_roles('admin')
 @login_required
@@ -510,6 +526,7 @@ def Mailing():
             flash_errors(subscriberform)
     return render_template('Subscriber.html', form=subscriberform)
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -531,6 +548,8 @@ def login():
             flash('Username or password is incorrect.', 'danger')   
     flash_errors(form)
     return render_template("login.html", form=form)
+
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###

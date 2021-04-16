@@ -2,14 +2,17 @@
 
 {% block main %}
 
+
+<h1 style="text-align:center; color: white;">WELCOME TO MAMA B'S WHOLESALE </h1>
+<h4 style="text-align:center; padding-bottom:20px; color: white;">Here you can view customer orders</h4>
 <div class="InventoryBody">
     {% for orders in orders %}
-    <div class="card" id="InventoryCards" style="width:450px; height:570px;">
+    <div class="card" id="InventoryCards" style="width: 330px; border: 5px solid #033d5f;">
         <div class="image" id="image">
         </div>
         <div class="InventoryCardBottom">
-            <h1>Order #: {{orders[0]}}</h1>
-            <h2 style="text-align:center; color: #033d5f;">{{orders[1]}}</h2>
+            <h2>Order #: {{orders[0]}}</h2>
+            <h3 style="text-align:center; color: #033d5f;">{{orders[1]}}</h3>
             {%set lst=[]%}
             {%set lst=orders[2].split(',')%}
 
@@ -30,7 +33,7 @@
 
             {% for i in range(lst|length) %}
                 <div class="TotalsDiv">
-                    <h5>{{lst2[i]}} {{lst[i]}} @</h5> 
+                    <h5>{{lst2[i]}} {{lst[i]}}</h5> 
                     <h5>${{lst3[i]}}</h5> 
                 </div>
         

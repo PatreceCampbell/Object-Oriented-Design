@@ -7,30 +7,79 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
-    <title>PDF</title>
+    <title>Reciept</title>
   </head>
+  <div style="text-align: center;">
+    <!-- <img style="height: 200px; width: 200px;" src="../static/Images/logo2.png" alt="Logo"> -->
+  </div>
+  {% for orders in orders %}
+  <div style="text-align: center;">
+    <h3 style="font-weight: 800;">Order #:{{orders[0]}}</h3>
+    <h3 style="font-weight: 800;">Order Date:{{orders[8]}}</h3>
+  </div>
+  <div style="display: flex;">
+    <h2>Purchased By:</h2>
+  </div>
+  <h5 style="font-weight: 800;">Customer Id: {{current_user.id}}</h5>
+  <h5 style="font-weight: 800;">Customer Name: {{orders[1]}}</h5>
+  <h5 style="font-weight: 800;">Email: {{current_user.email}}</h5>
+  <br><br>
   <body>
     <table class="table">
         <thead>
           <tr>
-              
-            <th scope="col">{{itemname}}</th>
-            <th scope="col">{{sellingprice}}</th>
-            <th scope="col">{{quantity}}</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Item Price</th>
           </tr>
         </thead>
+        {%set lst=[]%}
+        {%set lst=orders[2].split(',')%}
+
+        {%set lst2=[]%}
+        {%set lst2=orders[3].split(',')%}
+
+        {%set lst3=[]%}
+        {%set lst3=orders[4].split(',')%}
+
+        {%set lst4=[]%}
+        {%set lst4=orders[5].split(',')%}
+
+        {%set lst5=[]%}
+        {%set lst5=orders[6].split(',')%}
+
+        {%set lst6=[]%}
+        {%set lst6=orders[7].split(',')%}
+
+        {% for i in range(lst|length) %}
         <tbody>
           <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
+            <td >{{lst[i]}}</td>
+            <td>{{lst2[i]}}</td>
+            <td>${{lst3[i]}}</td>
           </tr>
-        </tbody>
+        
+        {% endfor %}
+
+          <tr style="font-weight:bold;">
+            <td></td>
+            <td>Subtotal:</td>
+            <td>${{lst4[0]}}</td>
+          </tr>
+          <tr  style="font-weight:bold;">
+            <td></td>
+            <td>Tax:</td>  
+            <td>${{lst5[0]}}</td>
+          </tr>
+          <tr  style="font-weight:bold;">
+            <td></td>
+            <td>Total:</td> 
+            <td>${{lst6[0]}}</td>
+          </tr>
+      </tbody>
       </table>
 
+    {%endfor%}
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
