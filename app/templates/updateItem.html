@@ -2,48 +2,59 @@
 
 {% block main %}
 <div class="UpdateItemBody" id="UpdateItemBody">
+  <h1 style="text-align:center; color: white;">WELCOME TO INVENTORY UPDATE</h1>
+  <h4 style="text-align:center; padding-bottom:20px; color: white;">This is where staff member come to update an item information in inventory.</h4>
   <div class="UpdateItemBottom" id="UpdateItemBottom">
     <div class="UpdateItemForm center-block">
-      <h2>UPDATE ITEMS IN INVENTORY</h2>
+      <h2 style="text-align: center;">UPDATE ITEMS IN INVENTORY</h2>
+      <hr>
       <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_item', id=id.id) }}" >
         {{ form.csrf_token }}
         <div class="form-group">
           {{ form.itemname.label }}
-          {{ form.itemname(class='form-control') }} 
+          {{ form.itemname(class='form-control', style="width: 100%;") }} 
         </div>
-        <div class="form-group">
-          {{ form.costprice.label }}
-          {{ form.costprice(class='form-control') }}
+        <div class="row">
+          <div class="col">
+            {{ form.costprice.label }}
+            {{ form.costprice(class='form-control') }}
+          </div>
+          <div class="col">
+              {{ form.sellingprice.label }}
+              {{ form.sellingprice(class='form-control') }}
+          </div>
         </div>
-        <div class="form-group">
-            {{ form.sellingprice.label }}
-            {{ form.sellingprice(class='form-control') }}
-        </div>
-        <div class="form-group">
-            {{ form.quantityinstock.label }}
-            {{ form.quantityinstock(class='form-control') }}
-        </div>
-        <div class="form-group">
-            {{ form.quantitysold.label }}
-            {{ form.quantitysold(class='form-control') }}
+        <div class="row">
+          <div class="col">
+              {{ form.quantityinstock.label }}
+              {{ form.quantityinstock(class='form-control') }}
+          </div>
+          <div class="col">
+              {{ form.quantitysold.label }}
+              {{ form.quantitysold(class='form-control') }}
+          </div>
         </div>
         <div class="form-group">
             {{ form.supplier.label }}
-            {{ form.supplier(class='form-control') }}
+            {{ form.supplier(class='form-control', style="width: 100%;") }}
         </div>
-        <div class="form-group">
-            {{ form.perishables.label }}
-            {{ form.perishables(class='form-control') }}
-        </div>
-        <div class="form-group">
-          {{ form.category.label }}
-          {{ form.category(class='form-control') }}
+        <div class="row">
+          <div class="col">
+              {{ form.perishables.label }}
+              {{ form.perishables(class='form-control') }}
+          </div>
+          <div class="col">
+            {{ form.category.label }}
+            {{ form.category(class='form-control') }}
+          </div>
         </div>
         <div class="form-group">
             {{form.photo.label}}
-            {{form.photo(class="form-control")}}
+            {{form.photo(class="form-control", style="width: 100%;")}}
         </div>
-        <button type="submit" name="submit" class="btn3 btn-primary">Update Item</button>
+        <div style="text-align: center;">
+          <button type="submit" name="submit" class="btn3 btn-primary">Update Item</button>
+        </div>
       </form>
     </div>
 {% endblock %}

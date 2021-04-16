@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block main %}
-<div class="card" id="AddItemBody">
-<h1 style="text-align:center; color: #033d5f;">WELCOME TO INVENTORY STOCKING</h1>
-<h4 style="text-align:center; padding-bottom:20px; color: #033d5f;">This is where staff member come to add an item to inventory.</h4>
+<div class="" id="AddItemBody">
+<h1 style="text-align:center; color: white;">WELCOME TO INVENTORY STOCKING</h1>
+<h4 style="text-align:center; padding-bottom:20px; color: white;">This is where staff member come to add an item to inventory.</h4>
 <div class="AddItemTop" id="AddItemTop">
-  <div class=AddItemImageDiv"">
-    <img class="AddItemImage" src="../static/Images/manage.png" alt="Logo">
+  <div class="AddItemImageDiv">
+    <img class="AddItemImage" src="../static/Images/manage2.png" alt="Add Item Image">
   </div>
   <div class="card" id="AddItemForm">
-    <h2 style="text-align:center;">ADD ITEMS HERE!</h2>
+    <h2 style="text-align:center;">ADD ITEMS HERE</h2>
+    <hr>
 
     <form method="post" enctype="multipart/form-data" action="{{ url_for('additem') }}">
       {{ form.csrf_token }}
-        <div class="form-group" style="margin-left:-10px;>
+        <div class="form-group" style="margin-left:-10px;">
           {{ form.item_name.label }}
           {{ form.item_name(class='form-control', placeholder="Enter item name", style="width:101%;") }}
         </div>
@@ -41,7 +42,7 @@
         </div>
         </div>
 
-        <div class="form-group" style="margin-left:-10px;>
+        <div class="form-group" style="margin-left:-10px;">
             {{ form.supplier.label }}
             {{ form.supplier(class='form-control', placeholder="Enter supplier name", style="width:101%;") }}
         </div>

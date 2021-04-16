@@ -1,4 +1,7 @@
 body {
+    background-image: url("/static/Images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
     padding-top: 5rem;
     padding-right: 20px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -319,7 +322,7 @@ button:hover{
     height: 900px;
     text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    /* box-shadow: 0 10px 25px rgb(9, 73, 110);   */
+    margin: auto;
 }
 
 .Signup-form{
@@ -423,10 +426,6 @@ tr{
     padding: 10px;
 }
 
-#AddItemBody:hover{
-    background-color: white;
-}
-
 .AddItemTop{
     padding: 10px;
     display: flex;
@@ -435,18 +434,26 @@ tr{
     justify-content: center;
     gap: 5px;
     width: 100%;
+    background-color: rgba(255, 255, 255, 0);
 }
 
 #AddItemForm{
     box-shadow: 15px 15px 5px grey;
-    background-color: rgb(1, 2, 44);
-    border-top-left-radius: 10% 50%;
-    border-bottom-left-radius: 10% 50%;
+    background-color: rgb(207, 206, 206);
+    border-radius: 10% 10%;
     padding-left: 50px;
     padding-top: 5px;
     padding-right: 20px;
-    color: white;
+    color: black;
     width: 60%;
+}
+
+#AddItemForm .form-control{
+    background-color: white;
+}
+
+#AddItemForm .col{
+    font-weight: bolder;
 }
 
 #AddItemForm .form-group{
@@ -460,6 +467,32 @@ tr{
 .AddItemImage{
     width: 650px;
     height: 650px;
+}
+
+.UpdateItemForm{
+    width: 700px;
+    padding: 15px;
+    border: 2px solid grey;
+    box-shadow: 5px 5px 2px grey;
+    border-radius: 20px;
+    margin: auto;
+    background-color: rgb(236, 233, 233);
+}
+
+.UpdateItemForm .col{
+    margin-left: 10px;
+}
+
+.UpdateItemForm .col .form-control{
+    width: 300px;
+}
+
+.UpdateItemForm .form-control{
+    background-color: white;
+}
+
+.UpdateItemForm .form-control1{
+    width: 1000px;
 }
 
 .ReportBody{
@@ -495,9 +528,11 @@ tr{
 
 .InventoryBody{
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: auto auto auto;
     grid-template-rows: auto;
-    row-gap: 40px;
+    gap: 40px;
+    justify-content: center;
+    align-content: center;
 }
 
 #InventoryCards{
@@ -584,6 +619,6 @@ tr{
 .TotalsDiv{
     display: flex;
     flex-direction: row;
-    gap: 30px;
+    gap: 15px;
     justify-content: flex-end;
 }

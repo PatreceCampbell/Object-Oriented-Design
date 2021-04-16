@@ -3,8 +3,8 @@
 {% block main %}
 {% include 'flash_messages.html' %}
 
-<h1 style="text-align:center; color: #033d5f;">WELCOME TO MAMA B'S WHOLESALE </h1>
-<h4 style="text-align:center; padding-bottom:20px; color: #033d5f;">Here you can browse for items we currently have available</h4>
+<h1 style="text-align:center; color: white;">WELCOME TO MAMA B'S WHOLESALE </h1>
+<h4 style="text-align:center; padding-bottom:20px; color: white;">Here you can browse for items we currently have available</h4>
 <form class="MenuForm" action="{{url_for('menu')}}" method="POST">
     {{ form.csrf_token }}
 
