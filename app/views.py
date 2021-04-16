@@ -183,19 +183,19 @@ def addtodb():
             else:
                 maxidd=maxid[0]+1
 
-        for key,items in session['Shoppingcart'].items():
-            itemname=items['name']
-            sellingprice=items['price']
-            quantity=items['quantity']
-            subtotal=float(quantity)*float(sellingprice)
-            tax=round((0.15 * float(subtotal)),2)
-            subtotal1+=float(items['price'])*int(items['quantity'])
+        # for key,items in session['Shoppingcart'].items():
+        #     itemname=items['name']
+        #     sellingprice=items['price']
+        #     quantity=items['quantity']
+        #     # subtotal=float(quantity)*float(sellingprice)
+        #     # tax=round((0.15 * float(subtotal)),2)
+        #     subtotal1+=float(items['price'])*int(items['quantity'])
 
-            db=connect_db()
-            cur=db.cursor()
-            sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date,order_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],tax,datenow,maxidd))
-            db.commit()
+        #     db=connect_db()
+        #     cur=db.cursor()
+        #     sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date,order_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1],datenow,maxidd))
+        #     db.commit()
 
             #SUBTRACTION
             # db=connect_db()
@@ -203,6 +203,7 @@ def addtodb():
             # sql="UPDATE Inventory SET quantity_instock=quantity_instock-%s WHERE item_name=%s"
             # cur.execute(sql,(quantity,itemname))
             # db.commit()
+        flash(Markup('Successfully registered, please click <a href="{{url_for("get_pdf(Reciept)")}}" target="#" class="alert-link">here</a>'))
 
         flash('Order Submitted','success')
         return redirect(url_for('menu'))
@@ -212,8 +213,8 @@ def addtodb():
 @requires_roles('customer')
 @login_required
 def get_pdf(invoice):
+    filepath='/uploads'
     if request.method=='POST':
-    
         for key,items in session['Shoppingcart'].items():
             itemname=items['name']
             sellingprice=items['price']
@@ -222,7 +223,7 @@ def get_pdf(invoice):
         pdf=pdfkit.from_string(rendered,False)
         response=make_response(pdf)
         response.headers['content-Type']='application/pdf'
-        response.headers['content-Dispostion']='inline; filename=invoice.pdf'
+        response.headers['content-Dispostion']='inline; filename=invoice.pdf' 
         return response
     return render_template('pdf.html')
 
@@ -406,10 +407,9 @@ def report():
 def manage():
     db=connect_db()
     cur=db.cursor()
-    sql="SELECT order_id, ARRAY_AGG (item_name || ' ' || quantity) as persondata FROM customer_orders GROUP BY order_id ORDER BY order_id;"
+    sql="SELECT order_id,array_to_string(array_agg(DISTINCT CONCAT(first_name, ' ', last_name)), ', '), array_to_string(array_agg( CONCAT(item_name)), ', '),array_to_string(array_agg( CONCAT(quantity)), ', '),array_to_string(array_agg( CONCAT(selling_price)), ', '),array_to_string(array_agg( DISTINCT CONCAT(grandsubtotal)), ', '), array_to_string(array_agg( DISTINCT CONCAT(tax)), ', '),array_to_string(array_agg( DISTINCT CONCAT(total)), ', ') as persondata FROM customer_orders GROUP BY order_id;"
     cur.execute(sql)
     orders=cur.fetchall()
-
     return render_template('manageord.html',orders=orders)
     
 

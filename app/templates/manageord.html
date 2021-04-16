@@ -7,17 +7,39 @@
 
 
 <div class="InventoryBody">
-    {{orders}}
     {% for orders in orders %}
         <div class="card" id="InventoryCards" style="width:450px; height:570px;">
       <div class="image" id="image">
       </div>
       <div class="InventoryCardBottom">
-        <h2 style="text-align:center; color: #033d5f;">{{orders[2]}}</h2>
-        <h5>{{orders[3]}} {{orders[4]}}</h5>
-        <h5></h5>
-        <h5></h5>
-        <h5></h5>
+        <h1>Order #: {{orders[0]}}</h1>
+        <h2 style="text-align:center; color: #033d5f;">{{orders[1]}}</h2>
+        {%set lst=[]%}
+        {%set lst=orders[2].split(',')%}
+
+        {%set lst2=[]%}
+        {%set lst2=orders[3].split(',')%}
+
+        {%set lst3=[]%}
+        {%set lst3=orders[4].split(',')%}
+
+        {%set lst4=[]%}
+        {%set lst4=orders[5].split(',')%}
+
+        {%set lst5=[]%}
+        {%set lst5=orders[6].split(',')%}
+
+        {%set lst6=[]%}
+        {%set lst6=orders[7].split(',')%}
+
+        {% for i in range(lst|length) %}
+        <h5>{{lst2[i]}} {{lst[i]}} @ ${{lst3[i]}}</h5> 
+       
+        {% endfor %}
+        <hr>
+        <h5>Subtotal: ${{lst4[0]}}</h5>
+        <h5>Tax: ${{lst5[0]}}</h5>
+        <h5>Total:${{lst6[0]}} </h5>
       </div>  
   
     </div>
