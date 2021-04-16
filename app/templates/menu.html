@@ -7,7 +7,15 @@
 <h4 style="text-align:center; padding-bottom:20px; color: #033d5f;">Here you can browse for items we currently have available</h4>
 <form class="MenuForm" action="{{url_for('menu')}}" method="POST">
     {{ form.csrf_token }}
- 
+
+    <div>
+        {{form.filterfield (class="FilterField")}}
+    </div>
+    
+    <div class="MenuButtonDiv">
+        <button type="submit" name="submit" class="btn btn-primary btn-md" style="margin-right:20px;">Filter</button>
+    </div>
+  
     <div>
         {{form.search(class="SearchField", placeholder="Search or jump to...")}}
     </div>
@@ -18,20 +26,22 @@
 </form>
 <div class="card-layout">
     {% for item in invent %}
-    <div class="card" id="MenuCard" style="width: 20rem; padding:5px;">
-        <div class="h-100 w-100">
-            <img class="card-img-top h-100 w-100" src="/uploads/{{item[9]}}" alt="Card image cap">
+    <div class="card" id="MenuCard" style="width: 30rem; padding:5px;">
+        <div class="h-100 w-100" id="MenuImageDiv">
+            <img class="card-img-top" id="MenuCardImage" src="/uploads/{{item[9]}}" alt="Card image cap">
         </div>
         <div class="card-body">
-          <h5 class="card-title text-center">{{item[1]}}</h5>
-          <h5 class="card-title text-center"style="color:black;">{{"Price: " + "$" + item[3]|string}}</h5>
-          <h5 class="card-title text-center"style="color:black;">{{"Manufactured By: " + item[6]|string}}</h5>
+          <h2 class="card-title text-center">{{item[1]}}</h2>
+          <h4 class="card-title text-center"style="color:black;">{{"Price: " + "$" + item[3]|string}}</h4>
+          <h4 class="card-title text-center"style="color:black;">{{"Manufactured By: " + item[6]|string}}</h4>
           <div class="card-footer bg-transparent border-success text-center">
             <form action="{{url_for('addtocart')}}" method="POST">
               <input type="hidden" name="product_id" value="{{item[0]}}">
               <label for="">Quantity:</label>
               <input type="number" name="quantity" id="MenuQuantity" value="1" min="1" max="{{item[4]}}">
+              <div>
               <button type="submit" class="btn btn-primary" id="CartButton"> Add to Cart</button>
+              </div>
             </form>
           </div>
         </div>

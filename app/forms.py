@@ -209,7 +209,7 @@ class UpdateItemForm(FlaskForm):
     quantitysold = IntegerField('Quantity Sold', validators=[DataRequired()])
     supplier = StringField('Supplier', validators=[DataRequired()])
     perishables = IntegerField('Perishables', validators=[DataRequired()])
-    category = StringField('Category', validators=[DataRequired()])
+    category = SelectField('Category', choices=[('Staple'), ('Juice'), ('Tin'),('Snack'), ('Toiletries'), ('Personal Item'), ('Powered'), ('Cooking Essential'), ('Candy'), ('Alcohol'), ('Diary')])
     photo = FileField('Item Image', validators=[DataRequired()])
 
     def setitem(self,itemname):
@@ -268,11 +268,18 @@ class UpdateItemForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     search = StringField('Search', description="Please enter meal you wish to search for.")
+    filterfield = SelectField('Category', choices=[('None'), ('Staple'), ('Juice'), ('Tin'),('Snack'), ('Toiletries'), ('Personal Item'), ('Powered'), ('Cooking Essential'), ('Candy'), ('Alcohol'), ('Diary')])
 
     def setsearch(self,search):
             self.search = search 
         
     def getsearch(self):
         return self.search 
+
+    def setfilterfield(self,filterfield):
+        self.filterfield = filterfield 
+        
+    def getfilterfield(self):
+        return self.filterfield     
 
         

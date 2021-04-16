@@ -111,8 +111,6 @@ class CustomerOrders(db.Model):
     tax = db.Column(db.Numeric(1000,2))
     ord_date=db.Column(db.DateTime, default=func.now())
 
-
-
     def __init__(self,pid,first_name,last_name,email,quantity,item_name,cost_price,subtotal,grandsubtotal,total,tax):
         self.pid=pid
         self.first_name = first_name
