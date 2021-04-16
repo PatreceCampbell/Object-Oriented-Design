@@ -203,6 +203,7 @@ def addtodb():
             # sql="UPDATE Inventory SET quantity_instock=quantity_instock-%s WHERE item_name=%s"
             # cur.execute(sql,(quantity,itemname))
             # db.commit()
+        
         flash(Markup('Successfully registered, please click <a href="{{url_for("get_pdf(Reciept)")}}" target="#" class="alert-link">here</a>'))
 
         flash('Order Submitted','success')
