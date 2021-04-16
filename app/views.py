@@ -188,13 +188,22 @@ def addtodb():
             sellingprice=items['price']
             quantity=items['quantity']
             subtotal=float(quantity)*float(sellingprice)
+            tax=round((0.15 * float(subtotal)),2)
             subtotal1+=float(items['price'])*int(items['quantity'])
 
             db=connect_db()
             cur=db.cursor()
             sql="INSERT INTO customer_orders (pid,first_name,last_name,email,quantity,item_name,selling_price,subtotal,grandsubtotal,total,tax,ord_date,order_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],lst2[-1],datenow,maxidd))
+            cur.execute(sql,(current_user.id,current_user.first_name,current_user.last_name,current_user.email,quantity,itemname,sellingprice,subtotal,lst4[-1],lst3[-1],tax,datenow,maxidd))
             db.commit()
+
+            #SUBTRACTION
+            # db=connect_db()
+            # cur=db.cursor()
+            # sql="UPDATE Inventory SET quantity_instock=quantity_instock-%s WHERE item_name=%s"
+            # cur.execute(sql,(quantity,itemname))
+            # db.commit()
+
         flash('Order Submitted','success')
         return redirect(url_for('menu'))
     return redirect(url_for('menu'))
@@ -334,13 +343,28 @@ def menu():
 
     if request.method == 'POST' and form.validate_on_submit():
         search = form.search.data
+        filterfield = form.filterfield.data
 
-        db=connect_db()
-        cur=db.cursor()
-        cur.execute('SELECT * FROM Inventory WHERE item_name like %s', ('%' + search + '%',))        
-        invent = cur.fetchall()
+        if filterfield == 'None':
+            db=connect_db()
+            cur=db.cursor()
+            cur.execute('SELECT * FROM Inventory WHERE item_name like %s', ('%' + search + '%',))        
+            invent = cur.fetchall()
+            return render_template('menu.html', invent=invent, form=form)
 
-        return render_template('menu.html', invent=invent, form=form)
+        if filterfield != 'None' and search != '':
+            db=connect_db()
+            cur=db.cursor()
+            cur.execute('SELECT * FROM Inventory WHERE item_name like %s and category = %s', ('%' + search + '%', filterfield,))        
+            invent = cur.fetchall()
+            return render_template('menu.html', invent=invent, form=form)
+
+        else:    
+            db=connect_db()
+            cur=db.cursor()
+            cur.execute('SELECT * FROM Inventory WHERE category = %s', (filterfield,))        
+            invent = cur.fetchall()
+            return render_template('menu.html', invent=invent, form=form)
     else:
         db=connect_db()
         cur=db.cursor()
@@ -382,7 +406,8 @@ def report():
 def manage():
     db=connect_db()
     cur=db.cursor()
-    cur.execute('SELECT * FROM customer_orders')
+    sql="SELECT order_id, ARRAY_AGG (item_name || ' ' || quantity) as persondata FROM customer_orders GROUP BY order_id ORDER BY order_id;"
+    cur.execute(sql)
     orders=cur.fetchall()
 
     return render_template('manageord.html',orders=orders)

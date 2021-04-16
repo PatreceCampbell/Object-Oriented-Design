@@ -2,35 +2,30 @@
 
 {% block main %}
 
-<table class="table" style="width: 100%;">
-    {% include 'flash_messages.html' %}
-    <thead class="thead-dark">
-    <tr>
-        <th scope="col" style="padding-right: 5px;">Order Number</th>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Item Name</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Subtotal</th>
-        <th scope="col">Tax</th>
-        <th scope="col">Total</th>
-        <th scope="col">Order Date</th>
-    </tr>
-    </thead>
+
+
+
+
+<div class="InventoryBody">
+    {{orders}}
     {% for orders in orders %}
-    <tbody>
-    <tr>
-        <td>{{orders.order_id}}</td>
-        <td>{{orders.first_name}} {{orders.last_name}}</td>
-        <td>{{orders.email}}</td>
-        <td>{{orders.item_name}}</td>
-        <td>{{orders.quantity}}</td>
-        <td>{{orders.grandsubtotal}}</td>
-        <td>{{orders.tax}}</td>
-        <td>{{orders.total}}</td>
-        <td>{{orders.ord_date}}</td>
-    </tr>
-    {% endfor %}
-</table>
+        <div class="card" id="InventoryCards" style="width:450px; height:570px;">
+      <div class="image" id="image">
+      </div>
+      <div class="InventoryCardBottom">
+        <h2 style="text-align:center; color: #033d5f;">{{orders[2]}}</h2>
+        <h5>{{orders[3]}} {{orders[4]}}</h5>
+        <h5></h5>
+        <h5></h5>
+        <h5></h5>
+      </div>  
+  
+    </div>
+    {%endfor%}
+    </div>
+   
+  </div>
+
+
 
 {% endblock %}
